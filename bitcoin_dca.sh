@@ -12,4 +12,4 @@ echo "Your Coinbase Pro API passphrase:"
 read -s PASSPHRASE
 export PASSPHRASE
 
-./buy_bitcoin.py
+nohup python3 -u ./buy_bitcoin.py > btc_dca.log &
