@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from config import DCA_USD_AMOUNT, DCA_FREQUENCY, USE_USDC, AUTO_WITHDRAWL, WITHDRAW_THRESHOLD, BTC_ADDRESSES
+from config import DCA_USD_AMOUNT, DCA_FREQUENCY, AUTO_WITHDRAWL, WITHDRAW_THRESHOLD, BTC_ADDRESSES
 from coinbase_pro import CoinbasePro
 
 import os
