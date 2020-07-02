@@ -2,6 +2,10 @@
 
 ## Dollar Cost Averaging Bitcoin on CoinbasePro
 
+After checking out this repo, please run:
+
+`git submodule update --init`
+
 To start Bitcoin DCA:
 
 `./start_dca.sh`
