@@ -1,4 +1,4 @@
-import cbpro
+import coinbasepro_python.cbpro
 import time
 
 class CoinbasePro:
