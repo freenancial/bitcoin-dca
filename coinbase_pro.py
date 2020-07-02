@@ -64,7 +64,7 @@ class CoinbasePro:
     print(f"  Date: \t{order_result['done_at']}")
 
   def withdrawBitcoin(self, amount, address):
-    print(f"Withdrawing ${amount} Bitcoin to address...")
+    print(f"Withdrawing ${amount} Bitcoin to address {address} ...")
     withdraw_result = self.auth_client.crypto_withdraw(amount, 'BTC', address)
     print(withdraw_result)
 
