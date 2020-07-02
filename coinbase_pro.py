@@ -2,8 +2,9 @@ import cbpro
 import time
 
 class CoinbasePro:
-  def __init__(self, api_key, api_secret, passphrase):
+  def __init__(self, api_key, api_secret, passphrase, use_usdc):
     self.auth_client = cbpro.AuthenticatedClient(api_key, api_secret, passphrase)
+    self.use_usdc = use_usdc
     self.refreshBalance()
 
   def refreshBalance(self):
@@ -13,6 +14,7 @@ class CoinbasePro:
     self.coinbase_usd_account = self.getCoinbaseAccount('USD')
     self.coinbase_usdc_account = self.getCoinbaseAccount('USDC')
     self.coinbase_pro_usd_account = self.getCoinbaseProAccount('USD')
+    self.coinbase_pro_usdc_account = self.getCoinbaseProAccount('USDC')
     self.coinbase_pro_btc_account = self.getCoinbaseProAccount('BTC')
     self.showBalance()
 
@@ -24,25 +26,28 @@ class CoinbasePro:
 
   def showBalance(self):
     print()
-    print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
-    print("Coinbase USD balance: {:.2f}".format(float(self.coinbase_usd_account['balance'])))
-    print("Coinbase Pro USD balance: {:.2f}".format(float(self.coinbase_pro_usd_account['balance'])))
-    print("Coinbase Pro BTC balance: {:.2f}".format(float(self.coinbase_pro_btc_account['balance'])))
+    if not self.use_usdc:
+      print("Coinbase USD balance: {:.2f}".format(float(self.coinbase_usd_account['balance'])))
+      print("Coinbase Pro USD balance: {:.2f}".format(float(self.coinbase_pro_usd_account['balance'])))
+    else:
+      print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
+      print("Coinbase Pro USDC balance: {:.2f}".format(float(self.coinbase_pro_usdc_account['balance'])))
+    print("Coinbase Pro BTC balance: {}".format(float(self.coinbase_pro_btc_account['balance'])))
     print()
 
-  def depositFromCoinbase(self, amount, use_usdc=False):
-    currency = 'USD' if not use_usdc else 'USDC'
-    account_id = self.coinbase_usd_account['id'] if not use_usdc else self.coinbase_usdc_account['id']
+  def depositFromCoinbase(self, amount):
+    currency = 'USD' if not self.use_usdc else 'USDC'
+    account_id = self.coinbase_usd_account['id'] if not self.use_usdc else self.coinbase_usdc_account['id']
 
     print(f"Depoisting ${amount} ${currency} from Coinabase to Coinbase Pro...")
     deposit_result = self.auth_client.coinbase_deposit(amount, currency, account_id)
     print(deposit_result)
     self.refreshBalance()
 
-  def buyBitcoin(self, usd_amount, use_usdc = False):
+  def buyBitcoin(self, usd_amount):
     print(f"Buying ${usd_amount} Bitcoin on Coinbase Pro...")
 
-    product_id = 'BTC-USD' if not use_usdc else 'BTC-USDC'
+    product_id = 'BTC-USD' if not self.use_usdc else 'BTC-USDC'
     order_result = self.auth_client.place_market_order(product_id, 'buy', funds=usd_amount)
     while not order_result['settled']:
       time.sleep(1)
