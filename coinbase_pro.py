@@ -5,7 +5,6 @@ class CoinbasePro:
   def __init__(self, api_key, api_secret, passphrase, use_usdc):
     self.auth_client = cbpro.AuthenticatedClient(api_key, api_secret, passphrase)
     self.use_usdc = use_usdc
-    self.refreshBalance()
 
   def refreshBalance(self):
     self.coinbase_pro_accounts = self.auth_client.get_accounts()
