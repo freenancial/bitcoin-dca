@@ -26,19 +26,24 @@ class CoinbasePro:
     print()
     print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
     print("Coinbase USD balance: {:.2f}".format(float(self.coinbase_usd_account['balance'])))
-    print("Coinbase USD balance: {:.2f}".format(float(self.coinbase_pro_usd_account['balance'])))
-    print(f"Coinbase Pro BTC balance: {self.coinbase_pro_btc_account['balance']}")
+    print("Coinbase Pro USD balance: {:.2f}".format(float(self.coinbase_pro_usd_account['balance'])))
+    print("Coinbase Pro BTC balance: {:.2f}".format(float(self.coinbase_pro_btc_account['balance'])))
     print()
 
-  def depositUSDFromCoinbase(self, amount):
-    print(f"Depoisting ${amount} from Coinabase to Coinbase Pro...")
-    deposit_result = self.auth_client.coinbase_deposit(amount, 'USD', self.coinbase_usd_account['id'])
+  def depositFromCoinbase(self, amount, use_usdc=False):
+    currency = 'USD' if not use_usdc else 'USDC'
+    account_id = self.coinbase_usd_account['id'] if not use_usdc else self.coinbase_usdc_account['id']
+
+    print(f"Depoisting ${amount} ${currency} from Coinabase to Coinbase Pro...")
+    deposit_result = self.auth_client.coinbase_deposit(amount, currency, account_id)
     print(deposit_result)
     self.refreshBalance()
 
-  def buyBitcoin(self, usd_amount):
+  def buyBitcoin(self, usd_amount, use_usdc = False):
     print(f"Buying ${usd_amount} Bitcoin on Coinbase Pro...")
-    order_result = self.auth_client.place_market_order('BTC-USD', 'buy', funds=usd_amount)
+
+    product_id = 'BTC-USD' if not use_usdc else 'BTC-USDC'
+    order_result = self.auth_client.place_market_order(product_id, 'buy', funds=usd_amount)
     while not order_result['settled']:
       time.sleep(1)
       order_result = self.auth_client.get_order(order_result['id'])
@@ -49,7 +54,6 @@ class CoinbasePro:
     print(f"  Market: \t{order_result['product_id']}")
     print(f"  Size: \t{ round( float(order_result['specified_funds']), 2 )}")
     print(f"  Filled: \t{order_result['filled_size']}")
-    print(
-        f"  Filled Price: {round( float(order_result['funds']) / float(order_result['filled_size']), 2 )}")
+    print(f"  Filled Price: {round( float(order_result['funds']) / float(order_result['filled_size']), 2 )}")
     print(f"  Fee: \t\t{order_result['fill_fees']}")
     print(f"  Date: \t{order_result['done_at']}")
