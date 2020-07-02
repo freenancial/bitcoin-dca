@@ -9,13 +9,14 @@ import datetime
 API_KEY = os.environ['API_KEY']
 API_SECRET = os.environ['API_SECRET']
 PASSPHRASE = os.environ['PASSPHRASE']
-coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE, use_usdc=USE_USDC)
+coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)
 
 cur_btc_address_index = 0
 
 while True:
   coinbase_pro.refreshBalance()
-  coinbase_pro.depositFromCoinbase(DCA_USD_AMOUNT)
+  coinbase_pro.depositUSDCFromCoinbase(DCA_USD_AMOUNT)
+  coinbase_pro.convertUSDCToUSD(DCA_USD_AMOUNT)
   coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
 
   if AUTO_WITHDRAWL and cur_btc_address_index < len(BTC_ADDRESSES) and coinbase_pro.getBitcoinWorth() >= WITHDRAW_THRESHOLD:

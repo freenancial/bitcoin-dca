@@ -2,15 +2,13 @@ import cbpro
 import time
 
 class CoinbasePro:
-  def __init__(self, api_key, api_secret, passphrase, use_usdc):
+  def __init__(self, api_key, api_secret, passphrase):
     self.auth_client = cbpro.AuthenticatedClient(api_key, api_secret, passphrase)
-    self.use_usdc = use_usdc
 
   def refreshBalance(self):
     self.coinbase_pro_accounts = self.auth_client.get_accounts()
     self.coinbase_accounts = self.auth_client.get_coinbase_accounts()
 
-    self.coinbase_usd_account = self.getCoinbaseAccount('USD')
     self.coinbase_usdc_account = self.getCoinbaseAccount('USDC')
     self.coinbase_pro_usd_account = self.getCoinbaseProAccount('USD')
     self.coinbase_pro_usdc_account = self.getCoinbaseProAccount('USDC')
@@ -25,21 +23,21 @@ class CoinbasePro:
 
   def showBalance(self):
     print()
-    if not self.use_usdc:
-      print("Coinbase USD balance: {:.2f}".format(float(self.coinbase_usd_account['balance'])))
-      print("Coinbase Pro USD balance: {:.2f}".format(float(self.coinbase_pro_usd_account['balance'])))
-    else:
-      print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
-      print("Coinbase Pro USDC balance: {:.2f}".format(float(self.coinbase_pro_usdc_account['balance'])))
+    print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
+    print("Coinbase Pro USDC balance: {:.2f}".format(float(self.coinbase_pro_usdc_account['balance'])))
+    print("Coinbase Pro USD balance: {:.2f}".format(float(self.coinbase_pro_usd_account['balance'])))
     print("Coinbase Pro BTC balance: {}".format(float(self.coinbase_pro_btc_account['balance'])))
     print()
 
-  def depositFromCoinbase(self, amount):
-    currency = 'USD' if not self.use_usdc else 'USDC'
-    account_id = self.coinbase_usd_account['id'] if not self.use_usdc else self.coinbase_usdc_account['id']
+  def depositUSDCFromCoinbase(self, amount):
+    print(f"Depoisting ${amount} USDC from Coinabase ...")
+    deposit_result = self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
+    print(deposit_result)
+    self.refreshBalance()
 
-    print(f"Depoisting ${amount} ${currency} from Coinabase to Coinbase Pro...")
-    deposit_result = self.auth_client.coinbase_deposit(amount, currency, account_id)
+  def convertUSDCToUSD(self, amount):
+    print(f"Converting ${amount} USDC to USD ...")
+    deposit_result = self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
     print(deposit_result)
     self.refreshBalance()
 
