@@ -5,7 +5,6 @@ class CoinbasePro:
   def __init__(self, api_key, api_secret, passphrase, use_usdc):
     self.auth_client = cbpro.AuthenticatedClient(api_key, api_secret, passphrase)
     self.use_usdc = use_usdc
-    self.refreshBalance()
 
   def refreshBalance(self):
     self.coinbase_pro_accounts = self.auth_client.get_accounts()
@@ -62,3 +61,18 @@ class CoinbasePro:
     print(f"  Filled Price: {round( float(order_result['funds']) / float(order_result['filled_size']), 2 )}")
     print(f"  Fee: \t\t{order_result['fill_fees']}")
     print(f"  Date: \t{order_result['done_at']}")
+
+  def withdrawBitcoin(self, amount, address):
+    print(f"Withdrawing ${amount} Bitcoin to address {address} ...")
+    withdraw_result = self.auth_client.crypto_withdraw(amount, 'BTC', address)
+    print(withdraw_result)
+    print()
+
+  def getBitcoinWorth(self):
+    return self.getBitcoinBalance() * self.getBitcoinPrice()
+
+  def getBitcoinBalance(self):
+    return float(self.coinbase_pro_btc_account['balance'])
+
+  def getBitcoinPrice(self):
+    return float(self.auth_client.get_product_order_book('BTC-USD', level=1)['bids'][0][0])
