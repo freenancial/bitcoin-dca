@@ -66,6 +66,7 @@ class CoinbasePro:
     print(f"Withdrawing ${amount} Bitcoin to address {address} ...")
     withdraw_result = self.auth_client.crypto_withdraw(amount, 'BTC', address)
     print(withdraw_result)
+    print()
 
   def getBitcoinWorth(self):
     return self.getBitcoinBalance() * self.getBitcoinPrice()
