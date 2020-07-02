@@ -1,3 +1,3 @@
 #!/bin/bash
 
-killall Python
+kill $(ps aux|grep "[b]uy_bitcoin.py" |  awk '{print $2}')
