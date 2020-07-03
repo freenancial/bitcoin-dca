@@ -2,9 +2,9 @@
 
 ## Dollar Cost Averaging Bitcoin on CoinbasePro
 
-To install this tool:
+After checking out this repo, please run:
 
-`./install.sh`
+`git submodule update --init`
 
 To start Bitcoin DCA:
 
@@ -14,7 +14,6 @@ To stop Bitcoin DCA:
 
 `./stop_dca.sh`
 
-To adjust the amount and frequency of Bitcoin DCA:
+To adjust the configuration of Bitcoin DCA:
 
 Modify `config.py`
-

@@ -1,9 +1,7 @@
 # How many dollar of Bitcoin you want to buy each time.
-DCA_USD_AMOUNT = 10
+DCA_USD_AMOUNT = 5
 # How frequent you want to buy Bitcoin in seconds.
-DCA_FREQUENCY = 7200
-# If set to True, bitcoin-dca will use USDC instead of USD to purchase Bitcoin.
-USE_USDC = True
+DCA_FREQUENCY = 4320
 
 # If set to True, bitcoin-dca will auto withdraw Bitcoin to configured BTC_ADDRESSES
 # once the Bitcoin worth of the account is above WITHDRAW_THRESHOLD.

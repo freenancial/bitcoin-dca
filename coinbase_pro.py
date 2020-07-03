@@ -1,52 +1,51 @@
-import cbpro
+from coinbasepro_python import cbpro
 import time
 
 class CoinbasePro:
-  def __init__(self, api_key, api_secret, passphrase, use_usdc):
+  def __init__(self, api_key, api_secret, passphrase):
     self.auth_client = cbpro.AuthenticatedClient(api_key, api_secret, passphrase)
-    self.use_usdc = use_usdc
 
   def refreshBalance(self):
-    self.coinbase_pro_accounts = self.auth_client.get_accounts()
+    self.accounts = self.auth_client.get_accounts()
     self.coinbase_accounts = self.auth_client.get_coinbase_accounts()
 
-    self.coinbase_usd_account = self.getCoinbaseAccount('USD')
-    self.coinbase_usdc_account = self.getCoinbaseAccount('USDC')
-    self.coinbase_pro_usd_account = self.getCoinbaseProAccount('USD')
-    self.coinbase_pro_usdc_account = self.getCoinbaseProAccount('USDC')
-    self.coinbase_pro_btc_account = self.getCoinbaseProAccount('BTC')
+    self.usdc_account = self.getAccount('USDC')
+    self.usd_account = self.getAccount('USD')
+    self.btc_account = self.getAccount('BTC')
+    self.coinbase_usdc_account=self.getCoinbaseAccount('USDC')
+
     self.showBalance()
+
+  def getAccount(self, currency):
+    return next(account for account in self.accounts if account['currency'] == currency)
 
   def getCoinbaseAccount(self, currency):
     return next(account for account in self.coinbase_accounts if account['currency'] == currency)
 
-  def getCoinbaseProAccount(self, currency):
-    return next(account for account in self.coinbase_pro_accounts if account['currency'] == currency)
-
   def showBalance(self):
     print()
-    if not self.use_usdc:
-      print("Coinbase USD balance: {:.2f}".format(float(self.coinbase_usd_account['balance'])))
-      print("Coinbase Pro USD balance: {:.2f}".format(float(self.coinbase_pro_usd_account['balance'])))
-    else:
-      print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
-      print("Coinbase Pro USDC balance: {:.2f}".format(float(self.coinbase_pro_usdc_account['balance'])))
-    print("Coinbase Pro BTC balance: {}".format(float(self.coinbase_pro_btc_account['balance'])))
+    print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
+    print("USDC balance: {:.2f}".format(float(self.usdc_account['balance'])))
+    print("USD balance: {:.2f}".format(float(self.usd_account['balance'])))
+    print("BTC balance: {}".format(float(self.btc_account['balance'])))
     print()
 
-  def depositFromCoinbase(self, amount):
-    currency = 'USD' if not self.use_usdc else 'USDC'
-    account_id = self.coinbase_usd_account['id'] if not self.use_usdc else self.coinbase_usdc_account['id']
-
-    print(f"Depoisting ${amount} ${currency} from Coinabase to Coinbase Pro...")
-    deposit_result = self.auth_client.coinbase_deposit(amount, currency, account_id)
+  def depositUSDCFromCoinbase(self, amount):
+    print(f"Depoisting ${amount} USDC from Coinabase ...")
+    deposit_result = self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
     print(deposit_result)
     self.refreshBalance()
 
-  def buyBitcoin(self, usd_amount):
-    print(f"Buying ${usd_amount} Bitcoin on Coinbase Pro...")
+  def convertUSDCToUSD(self, amount):
+    print(f"Converting ${amount} USDC to USD ...")
+    convert_result = self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
+    print(convert_result)
+    self.refreshBalance()
 
-    product_id = 'BTC-USD' if not self.use_usdc else 'BTC-USDC'
+  def buyBitcoin(self, usd_amount):
+    print(f"Buying ${usd_amount} Bitcoin ...")
+
+    product_id = 'BTC-USD'
     order_result = self.auth_client.place_market_order(product_id, 'buy', funds=usd_amount)
     while not order_result['settled']:
       time.sleep(1)
@@ -72,7 +71,7 @@ class CoinbasePro:
     return self.getBitcoinBalance() * self.getBitcoinPrice()
 
   def getBitcoinBalance(self):
-    return float(self.coinbase_pro_btc_account['balance'])
+    return float(self.btc_account['balance'])
 
   def getBitcoinPrice(self):
     return float(self.auth_client.get_product_order_book('BTC-USD', level=1)['bids'][0][0])
