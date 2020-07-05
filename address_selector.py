@@ -1,15 +1,28 @@
 from pycoin.services.providers import spendables_for_address
+from pycoin.symbols.btc import network as BTC
 
 class AddressSelector:
-    def __init__(self, addresses=[]):
+    def __init__(self, master_public_key, beginning_address=None):
         self.address_index = 0
-        self.addresses = addresses
+        self.receiving_public_key = BTC.parse(master_public_key).subkey_for_path("0")
+
+        if beginning_address is not None:
+            for self.address_index in range(1000):
+                if self.getCurrentAddress() == beginning_address:
+                    break
+                self.incrementAddressIndex()
+            if self.address_index == 1000:
+                raise Exception(f"Unable to find beginning address {beginning_address} with "
+                                f"master public key {master_public_key}")
+
+    def getCurrentAddress(self):
+        return self.receiving_public_key.subkey_for_path(str(self.address_index)).address()
 
     def getWithdrawAddress(self):
-        while self.address_index < len(self.addresses) and len(spendables_for_address(self.addresses[self.address_index], 'BTC')) > 0:
-            print(f"Skip address {self.addresses[self.address_index]} since it has already been used.")
-            self.address_index += 1
-        return self.addresses[self.address_index] if self.address_index < len(self.addresses) else None
+        while len(spendables_for_address(self.getCurrentAddress(), 'BTC')) > 0:
+            print(f"Skip address {self.getCurrentAddress()} since it has already been used.")
+            self.incrementAddressIndex()
+        return self.getCurrentAddress()
 
-    def incrementIndex(self):
+    def incrementAddressIndex(self):
         self.address_index += 1

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-from config import DCA_USD_AMOUNT, DCA_FREQUENCY, AUTO_WITHDRAWL, WITHDRAW_THRESHOLD, BTC_ADDRESSES
+from config import DCA_USD_AMOUNT, DCA_FREQUENCY
+from config import AUTO_WITHDRAWL, WITHDRAW_THRESHOLD, MASTER_PUBLIC_KEY, BEGINNING_ADDRESS
+
 from coinbase_pro import CoinbasePro
 from address_selector import AddressSelector
 
@@ -10,7 +12,7 @@ import datetime
 API_KEY = os.environ['API_KEY']
 API_SECRET = os.environ['API_SECRET']
 PASSPHRASE = os.environ['PASSPHRASE']
-address_selector = AddressSelector(BTC_ADDRESSES)
+address_selector = AddressSelector(MASTER_PUBLIC_KEY, BEGINNING_ADDRESS)
 
 while True:
   coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)

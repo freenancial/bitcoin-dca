@@ -3,18 +3,15 @@ DCA_USD_AMOUNT = 5
 # How frequent you want to buy Bitcoin in seconds.
 DCA_FREQUENCY = 4320
 
-# If set to True, bitcoin-dca will auto withdraw Bitcoin to configured BTC_ADDRESSES
-# once the Bitcoin worth of the account is above WITHDRAW_THRESHOLD.
+# If set to True, bitcoin-dca will auto withdraw Bitcoin once the Bitcoin's dollar
+# worth of the account is above WITHDRAW_THRESHOLD.
 AUTO_WITHDRAWL = False
-# Once the BTC worth reached the WITHDRAW_THRESHOLD, BTC will be auto withdrew
-# to configured BTC_ADDRESSES.
-WITHDRAW_THRESHOLD = 100
-# A list of BTC addreses for auto withdraw, each address will be used only once.
-# When the list is exhausted, the auto withdraw will stop.
-BTC_ADDRESSES = [
-    "address1",
-    "address2",
-    "address3",
-    "address4",
-    "address5",
-]
+# Auto withdraw threshold of BTC's dollar worth in the account.
+WITHDRAW_THRESHOLD = 98
+# The master public key to derive BTC addresess that utilized in auto withdraw.
+# Only addresses with empty balance wil be used, and each address will be used
+# only once.
+MASTER_PUBLIC_KEY = 'xpubxxx'
+# The beginning address that BTC auto withdraw to. If set to None, the first address
+# derived from MASTER_PUBLIC_KEY will be used as the BEGINNING_ADDRESS.
+BEGINNING_ADDRESS = None
