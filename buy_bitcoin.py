@@ -19,7 +19,7 @@ while True:
   coinbase_pro.convertUSDCToUSD(DCA_USD_AMOUNT)
   coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
 
-  if AUTO_WITHDRAWL and address_selector.getWithdrawAddress() and coinbase_pro.getBitcoinWorth() >= WITHDRAW_THRESHOLD:
+  if AUTO_WITHDRAWL and coinbase_pro.getBitcoinWorth() >= WITHDRAW_THRESHOLD and address_selector.getWithdrawAddress() :
     coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
     address_selector.incrementIndex()
 
