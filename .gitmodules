@@ -1,3 +1,6 @@
 [submodule "coinbasepro-python"]
 	path = coinbasepro_python
 	url = git@github.com:freenancial/coinbasepro-python.git
+[submodule "pycoin"]
+	path = pycoin
+	url = git@github.com:freenancial/pycoin.git
