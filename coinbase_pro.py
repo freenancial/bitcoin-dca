@@ -15,10 +15,20 @@ class CoinbasePro:
     self.coinbase_usdc_account = self.getCoinbaseAccount('USDC')
 
   def getAccount(self, currency):
-    return next(account for account in self.accounts if account['currency'] == currency)
+    try:
+      return next(account for account in self.accounts if account['currency'] == currency)
+    except Exception as e:
+      print(f"Failed to get account info of currency {currency} from accounts:")
+      print(self.accounts)
+      raise e
 
   def getCoinbaseAccount(self, currency):
-    return next(account for account in self.coinbase_accounts if account['currency'] == currency)
+    try:
+      return next(account for account in self.coinbase_accounts if account['currency'] == currency)
+    except Exception as e:
+      print(f"Failed to get account info of currency {currency} from coinbase_accounts:")
+      print(self.coinbase_accounts)
+      raise e
 
   def showBalance(self):
     print()
@@ -30,12 +40,14 @@ class CoinbasePro:
     print(f"Depoisting ${amount} USDC from Coinabase ...")
     deposit_result = self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
     print(deposit_result)
+    print()
     self.refreshBalance()
 
   def convertUSDCToUSD(self, amount):
     print(f"Converting ${amount} USDC to USD ...")
     convert_result = self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
     print(convert_result)
+    print()
     self.refreshBalance()
 
   def buyBitcoin(self, usd_amount):
