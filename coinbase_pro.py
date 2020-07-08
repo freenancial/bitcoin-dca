@@ -14,8 +14,6 @@ class CoinbasePro:
     self.btc_account = self.getAccount('BTC')
     self.coinbase_usdc_account=self.getCoinbaseAccount('USDC')
 
-    self.showBalance()
-
   def getAccount(self, currency):
     return next(account for account in self.accounts if account['currency'] == currency)
 
@@ -25,8 +23,6 @@ class CoinbasePro:
   def showBalance(self):
     print()
     print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
-    print("USDC balance: {:.2f}".format(float(self.usdc_account['balance'])))
-    print("USD balance: {:.2f}".format(float(self.usd_account['balance'])))
     print("BTC balance: {}".format(float(self.btc_account['balance'])))
     print()
 

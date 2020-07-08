@@ -15,9 +15,11 @@ address_selector = AddressSelector(BTC_ADDRESSES)
 
 while True:
   coinbase_pro.refreshBalance()
+  coinbase_pro.showBalance()
   coinbase_pro.depositUSDCFromCoinbase(DCA_USD_AMOUNT)
   coinbase_pro.convertUSDCToUSD(DCA_USD_AMOUNT)
   coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
+  coinbase_pro.showBalance()
 
   if AUTO_WITHDRAWL and coinbase_pro.getBitcoinWorth() >= WITHDRAW_THRESHOLD and address_selector.getWithdrawAddress() :
     coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
