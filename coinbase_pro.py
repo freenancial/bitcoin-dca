@@ -12,7 +12,7 @@ class CoinbasePro:
     self.usdc_account = self.getAccount('USDC')
     self.usd_account = self.getAccount('USD')
     self.btc_account = self.getAccount('BTC')
-    self.coinbase_usdc_account=self.getCoinbaseAccount('USDC')
+    self.coinbase_usdc_account = self.getCoinbaseAccount('USDC')
 
   def getAccount(self, currency):
     return next(account for account in self.accounts if account['currency'] == currency)

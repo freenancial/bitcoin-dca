@@ -10,11 +10,18 @@ import datetime
 API_KEY = os.environ['API_KEY']
 API_SECRET = os.environ['API_SECRET']
 PASSPHRASE = os.environ['PASSPHRASE']
-coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)
 address_selector = AddressSelector(BTC_ADDRESSES)
 
 while True:
-  coinbase_pro.refreshBalance()
+  coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)
+  try:
+    coinbase_pro.refreshBalance()
+  except Exception as e:
+    print(f"Refresh balance failed, error: {str(e)}")
+    print("Waiting for 60 seconds to retry ...")
+    time.sleep(60)
+    continue
+  
   coinbase_pro.showBalance()
   coinbase_pro.depositUSDCFromCoinbase(DCA_USD_AMOUNT)
   coinbase_pro.convertUSDCToUSD(DCA_USD_AMOUNT)
