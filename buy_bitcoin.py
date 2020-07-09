@@ -34,7 +34,7 @@ while True:
 
   if AUTO_WITHDRAWL and coinbase_pro.getBitcoinWorth() >= WITHDRAW_THRESHOLD and address_selector.getWithdrawAddress() :
     coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
-    address_selector.incrementIndex()
+    address_selector.incrementAddressIndex()
 
   next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
   print(f"Waiting until {next_buy_datetime} to buy ${DCA_USD_AMOUNT} Bitcoin...")
