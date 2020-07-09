@@ -15,7 +15,7 @@ PASSPHRASE = os.environ['PASSPHRASE']
 address_selector = AddressSelector(MASTER_PUBLIC_KEY, BEGINNING_ADDRESS)
 
 while True:
-  print('----------------------------------------------------------')
+  print('--------------------------------------------------')
   coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)
   try:
     coinbase_pro.refreshBalance()
