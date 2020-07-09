@@ -36,4 +36,6 @@ while True:
 
   next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
   print(f"Waiting until {next_buy_datetime} to buy ${DCA_USD_AMOUNT} Bitcoin...")
+  print()
+  print('----------------------------------------------------------')
   time.sleep(DCA_FREQUENCY)
