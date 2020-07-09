@@ -1,11 +1,12 @@
 import cbpro
 import time
+import itertools
 
 class CoinbasePro:
   def __init__(self, api_key, api_secret, passphrase):
     self.auth_client = cbpro.AuthenticatedClient(api_key, api_secret, passphrase)
 
-  def refreshBalance(self):
+  def refresh(self):
     self.accounts = self.auth_client.get_accounts()
     self.coinbase_accounts = self.auth_client.get_coinbase_accounts()
 
@@ -31,18 +32,21 @@ class CoinbasePro:
       raise e
 
   def showBalance(self):
+    self.refresh()
     print()
     print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
     print("BTC balance: {}".format(float(self.btc_account['balance'])))
     print()
 
+  def getRecentBuysCount(self):
+    btc_account_history = self.auth_client.get_account_history(self.btc_account['id'])
+    return sum(1 for _ in itertools.takewhile(lambda x: x['type'] == 'match', btc_account_history))
+
   def depositUSDCFromCoinbase(self, amount):
     self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
-    self.refreshBalance()
 
   def convertUSDCToUSD(self, amount):
     self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
-    self.refreshBalance()
 
   def buyBitcoin(self, usd_amount):
     print(f"Buying ${usd_amount} Bitcoin ...")
@@ -53,7 +57,6 @@ class CoinbasePro:
       time.sleep(1)
       order_result = self.auth_client.get_order(order_result['id'])
     self.printOrderResult(order_result)
-    self.refreshBalance()
 
   def printOrderResult(self, order_result):
     print(f"  Size: \t{ round( float(order_result['specified_funds']), 2 )}")

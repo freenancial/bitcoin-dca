@@ -6,8 +6,8 @@ DCA_FREQUENCY = 4320
 # If set to True, bitcoin-dca will auto withdraw Bitcoin once the Bitcoin's dollar
 # worth of the account is above WITHDRAW_THRESHOLD.
 AUTO_WITHDRAWL = False
-# Auto withdraw threshold of BTC's dollar worth in the account.
-WITHDRAW_THRESHOLD = 98
+# Auto withdraw BTC when bitcoin-dca have bought Bitcoin WITHDRAW_EVERY_X_BUY times.
+WITHDRAW_EVERY_X_BUY = 20
 # The master public key to derive BTC addresess that utilized in auto withdraw.
 # Only addresses with empty balance wil be used, and each address will be used
 # only once.
