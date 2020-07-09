@@ -15,12 +15,14 @@ PASSPHRASE = os.environ['PASSPHRASE']
 address_selector = AddressSelector(MASTER_PUBLIC_KEY, BEGINNING_ADDRESS)
 
 while True:
+  print('----------------------------------------------------------')
   coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)
   try:
     coinbase_pro.refreshBalance()
   except Exception as e:
     print(f"Refresh balance failed, error: {str(e)}")
     print("Waiting for 60 seconds to retry ...")
+    print()
     time.sleep(60)
     continue
   
@@ -37,5 +39,4 @@ while True:
   next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
   print(f"Waiting until {next_buy_datetime} to buy ${DCA_USD_AMOUNT} Bitcoin...")
   print()
-  print('----------------------------------------------------------')
   time.sleep(DCA_FREQUENCY)
