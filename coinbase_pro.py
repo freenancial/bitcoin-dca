@@ -49,7 +49,7 @@ class CoinbasePro:
     self.refresh()
     print(f"Depositing ${amount} USDC from Coinbase ...")
     self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
-    time.sleep(1)
+    time.sleep(5)
 
   def convertUSDCToUSD(self, amount):
     self.refresh()
@@ -58,7 +58,7 @@ class CoinbasePro:
 
     print(f"Converting ${amount} USDC to USD ...")
     self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
-    time.sleep(1)
+    time.sleep(5)
 
   def buyBitcoin(self, usd_amount):
     self.refresh()
@@ -73,7 +73,7 @@ class CoinbasePro:
       time.sleep(1)
       order_result = self.auth_client.get_order(order_result['id'])
     self.printOrderResult(order_result)
-    time.sleep(1)
+    time.sleep(5)
 
   def usdc_balance(self):
     return float(self.usdc_account['balance'])
