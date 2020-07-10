@@ -1,6 +1,7 @@
 import cbpro
 import time
 import itertools
+import math
 
 class CoinbasePro:
   def __init__(self, api_key, api_secret, passphrase):
@@ -47,12 +48,16 @@ class CoinbasePro:
 
   def depositUSDCFromCoinbase(self, amount):
     self.refresh()
+
+    amount = math.ceil(amount * 100) / 100
     print(f"Depositing ${amount} USDC from Coinbase ...")
     self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
     time.sleep(5)
 
   def convertUSDCToUSD(self, amount):
     self.refresh()
+
+    amount = math.ceil(amount * 100) / 100
     if self.usdc_balance() < amount:
       self.depositUSDCFromCoinbase(amount - self.usdc_balance())
 
@@ -62,6 +67,7 @@ class CoinbasePro:
 
   def buyBitcoin(self, usd_amount):
     self.refresh()
+    
     print(f"Buying ${usd_amount} Bitcoin ...")
 
     if self.usd_balance() < usd_amount:
