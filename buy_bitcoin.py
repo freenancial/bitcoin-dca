@@ -19,24 +19,28 @@ next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENC
 while True:
   print('--------------------------------------------------')
   coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)
+  # Buy Bitcoin
   try:
     coinbase_pro.showBalance()
+    coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
   except Exception as e:
-    print(f"Error: {str(e)}")
+    print(e)
     print("Waiting for 60 seconds to retry ...")
     print()
     time.sleep(60)
     continue
   
-  coinbase_pro.depositUSDCFromCoinbase(DCA_USD_AMOUNT)
-  coinbase_pro.convertUSDCToUSD(DCA_USD_AMOUNT)
-  coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
-  coinbase_pro.showBalance()
+  # Show the new balance and withdraw BTC if needed
+  try:
+    coinbase_pro.showBalance()
 
-  if AUTO_WITHDRAWL and coinbase_pro.getRecentBuysCount() >= WITHDRAW_EVERY_X_BUY:
-    coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
-    address_selector.incrementAddressIndex()
+    if AUTO_WITHDRAWL and coinbase_pro.getRecentBuysCount() >= WITHDRAW_EVERY_X_BUY:
+      coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
+      address_selector.incrementAddressIndex()
+  except Exception as e:
+    print(e)
 
+  # Wait for next buy time
   print(f"Waiting until {next_buy_datetime} to buy ${DCA_USD_AMOUNT} Bitcoin...")
   print()
   while datetime.datetime.now() < next_buy_datetime:

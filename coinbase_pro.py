@@ -14,6 +14,7 @@ class CoinbasePro:
     self.usd_account = self.getAccount('USD')
     self.btc_account = self.getAccount('BTC')
     self.coinbase_usdc_account = self.getCoinbaseAccount('USDC')
+    time.sleep(1)
 
   def getAccount(self, currency):
     try:
@@ -43,15 +44,24 @@ class CoinbasePro:
     return sum(1 for _ in itertools.takewhile(lambda x: x['type'] == 'match', btc_account_history))
 
   def depositUSDCFromCoinbase(self, amount):
+    self.refresh()
     self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
-    time.sleep(5)
+    time.sleep(1)
 
   def convertUSDCToUSD(self, amount):
+    self.refresh()
+    if self.usdc_account['balance'] < amount:
+      self.depositUSDCFromCoinbase(amount - float(self.usdc_account['balance']))
+
     self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
-    time.sleep(5)
+    time.sleep(1)
 
   def buyBitcoin(self, usd_amount):
+    self.refresh()
     print(f"Buying ${usd_amount} Bitcoin ...")
+
+    if self.usd_account['balance'] < usd_amount:
+      self.convertUSDCToUSD(usd_amount - float(self.usd_account['balance']))
 
     product_id = 'BTC-USD'
     order_result = self.auth_client.place_market_order(product_id, 'buy', funds=usd_amount)
@@ -59,6 +69,7 @@ class CoinbasePro:
       time.sleep(1)
       order_result = self.auth_client.get_order(order_result['id'])
     self.printOrderResult(order_result)
+    time.sleep(1)
 
   def printOrderResult(self, order_result):
     print(f"  Size: \t{ round( float(order_result['specified_funds']), 2 )}")
