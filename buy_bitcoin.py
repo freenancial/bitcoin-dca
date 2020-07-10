@@ -14,6 +14,8 @@ API_SECRET = os.environ['API_SECRET']
 PASSPHRASE = os.environ['PASSPHRASE']
 address_selector = AddressSelector(MASTER_PUBLIC_KEY, BEGINNING_ADDRESS)
 
+next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
+
 while True:
   print('--------------------------------------------------')
   coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)
@@ -35,7 +37,8 @@ while True:
     coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
     address_selector.incrementAddressIndex()
 
-  next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
   print(f"Waiting until {next_buy_datetime} to buy ${DCA_USD_AMOUNT} Bitcoin...")
   print()
-  time.sleep(DCA_FREQUENCY)
+  while datetime.datetime.now() < next_buy_datetime:
+    time.sleep(1)
+  next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
