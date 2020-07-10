@@ -36,10 +36,10 @@ class CoinbasePro:
   def showBalance(self):
     self.refresh()
     print()
-    print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
-    print("USDC balance: {:.2f}".format(self.usdc_balance()))
-    print("USD balance: {:.2f}".format(self.usd_balance()))
-    print("BTC balance: {}".format(float(self.btc_account['balance'])))
+    print("Coinbase USDC balance: ${:.2f}".format(float(self.coinbase_usdc_account['balance'])))
+    print("USDC balance: ${:.2f}".format(self.usdc_balance()))
+    print("USD balance: ${:.2f}".format(self.usd_balance()))
+    print("BTC balance: ₿{}".format(float(self.btc_account['balance'])))
     print()
 
   def getRecentBuysCount(self):
@@ -97,7 +97,7 @@ class CoinbasePro:
     print(f"  Date: \t{order_result['done_at']}")
 
   def withdrawBitcoin(self, amount, address):
-    print(f"Withdrawing ${amount} Bitcoin to address {address} ...")
+    print(f"Withdrawing ₿{amount} Bitcoin to address {address} ...")
     withdraw_result = self.auth_client.crypto_withdraw(amount, 'BTC', address)
     print(withdraw_result)
     print()
