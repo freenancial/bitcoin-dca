@@ -4,7 +4,7 @@
 
 After checking out this repo, please run:
 
-`git submodule update --init`
+`./setup.sh`
 
 To start Bitcoin DCA:
 
