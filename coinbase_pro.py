@@ -67,12 +67,12 @@ class CoinbasePro:
 
   def buyBitcoin(self, usd_amount):
     self.refresh()
-    
-    print(f"Buying ${usd_amount} Bitcoin ...")
 
+    usd_amount = math.ceil(usd_amount * 100) / 100
     if self.usd_balance() < usd_amount:
       self.convertUSDCToUSD(usd_amount - self.usd_balance())
 
+    print(f"Buying ${usd_amount} Bitcoin ...")
     product_id = 'BTC-USD'
     order_result = self.auth_client.place_market_order(product_id, 'buy', funds=usd_amount)
     while not order_result['settled']:
