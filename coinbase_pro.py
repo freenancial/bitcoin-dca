@@ -37,17 +37,11 @@ class CoinbasePro:
     print()
 
   def depositUSDCFromCoinbase(self, amount):
-    print(f"Depoisting ${amount} USDC from Coinabase ...")
-    deposit_result = self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
-    print(deposit_result)
-    print()
+    self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
     self.refreshBalance()
 
   def convertUSDCToUSD(self, amount):
-    print(f"Converting ${amount} USDC to USD ...")
-    convert_result = self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
-    print(convert_result)
-    print()
+    self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
     self.refreshBalance()
 
   def buyBitcoin(self, usd_amount):
@@ -62,7 +56,6 @@ class CoinbasePro:
     self.refreshBalance()
 
   def printOrderResult(self, order_result):
-    print(f"  Market: \t{order_result['product_id']}")
     print(f"  Size: \t{ round( float(order_result['specified_funds']), 2 )}")
     print(f"  Filled: \t{order_result['filled_size']}")
     print(f"  Filled Price: {round( float(order_result['funds']) / float(order_result['filled_size']), 2 )}")
