@@ -45,6 +45,7 @@ class CoinbasePro:
 
   def depositUSDCFromCoinbase(self, amount):
     self.refresh()
+    print(f"Depositing ${amount} USDC from Coinbase ...")
     self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
     time.sleep(1)
 
@@ -53,6 +54,7 @@ class CoinbasePro:
     if self.usdc_balance() < amount:
       self.depositUSDCFromCoinbase(amount - self.usdc_balance())
 
+    print(f"Converting ${amount - self.usdc_balance()} USDC to USD ...")
     self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
     time.sleep(1)
 
