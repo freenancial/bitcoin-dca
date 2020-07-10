@@ -24,7 +24,7 @@ while True:
     coinbase_pro.showBalance()
     coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
   except Exception as e:
-    print(e)
+    print(f"Error: {str(e)}")
     print("Waiting for 60 seconds to retry ...")
     print()
     time.sleep(60)
@@ -38,7 +38,7 @@ while True:
       coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
       address_selector.incrementAddressIndex()
   except Exception as e:
-    print(e)
+    print(f"Error: {str(e)}")
 
   # Wait for next buy time
   print(f"Waiting until {next_buy_datetime} to buy ${DCA_USD_AMOUNT} Bitcoin...")
