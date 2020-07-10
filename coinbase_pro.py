@@ -50,8 +50,8 @@ class CoinbasePro:
 
   def convertUSDCToUSD(self, amount):
     self.refresh()
-    if self.usdc_balance < amount:
-      self.depositUSDCFromCoinbase(amount - self.usdc_balance)
+    if self.usdc_balance() < amount:
+      self.depositUSDCFromCoinbase(amount - self.usdc_balance())
 
     self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
     time.sleep(1)
@@ -60,8 +60,8 @@ class CoinbasePro:
     self.refresh()
     print(f"Buying ${usd_amount} Bitcoin ...")
 
-    if self.usd_balance < usd_amount:
-      self.convertUSDCToUSD(usd_amount - self.usd_balance)
+    if self.usd_balance() < usd_amount:
+      self.convertUSDCToUSD(usd_amount - self.usd_balance())
 
     product_id = 'BTC-USD'
     order_result = self.auth_client.place_market_order(product_id, 'buy', funds=usd_amount)
