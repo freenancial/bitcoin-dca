@@ -36,6 +36,8 @@ class CoinbasePro:
     self.refresh()
     print()
     print("Coinbase USDC balance: {:.2f}".format(float(self.coinbase_usdc_account['balance'])))
+    print("USDC balance: {:.2f}".format(self.usdc_balance()))
+    print("USD balance: {:.2f}".format(self.usd_balance()))
     print("BTC balance: {}".format(float(self.btc_account['balance'])))
     print()
 
@@ -54,7 +56,7 @@ class CoinbasePro:
     if self.usdc_balance() < amount:
       self.depositUSDCFromCoinbase(amount - self.usdc_balance())
 
-    print(f"Converting ${amount - self.usdc_balance()} USDC to USD ...")
+    print(f"Converting ${amount} USDC to USD ...")
     self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
     time.sleep(1)
 
