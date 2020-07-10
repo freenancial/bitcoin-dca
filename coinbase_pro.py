@@ -44,9 +44,11 @@ class CoinbasePro:
 
   def depositUSDCFromCoinbase(self, amount):
     self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
+    time.sleep(5)
 
   def convertUSDCToUSD(self, amount):
     self.auth_client.convert_stablecoin(amount, 'USDC', 'USD')
+    time.sleep(5)
 
   def buyBitcoin(self, usd_amount):
     print(f"Buying ${usd_amount} Bitcoin ...")
