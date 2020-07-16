@@ -18,6 +18,8 @@ next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENC
 
 while True:
   print('--------------------------------------------------')
+  print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
   coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)
   # Buy Bitcoin
   try:
@@ -41,8 +43,8 @@ while True:
     print(f"Error: {str(e)}")
 
   # Wait for next buy time
-  print(f"Waiting until {next_buy_datetime} to buy ${DCA_USD_AMOUNT} Bitcoin...")
+  print(f"Waiting until {next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} to buy ${DCA_USD_AMOUNT} Bitcoin...")
   print()
   while datetime.datetime.now() < next_buy_datetime:
     time.sleep(1)
-  next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
+  next_buy_datetime = next_buy_datetime + datetime.timedelta(0, DCA_FREQUENCY)
