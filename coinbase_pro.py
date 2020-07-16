@@ -37,8 +37,8 @@ class CoinbasePro:
     self.refresh()
     print()
     print("Coinbase USDC balance: ${:.2f}".format(float(self.coinbase_usdc_account['balance'])))
-    print("USDC balance: ${:.2f}".format(self.usdc_balance()))
-    print("USD balance: ${:.2f}".format(self.usd_balance()))
+    print("USDC balance: ${:.2f}".format( math.floor( self.usdc_balance() * 100) / 100 ) )
+    print("USD balance: ${:.2f}".format( math.floor( self.usd_balance() * 100) / 100 ) )
     print("BTC balance: ₿{}".format(float(self.btc_account['balance'])))
     print()
 
