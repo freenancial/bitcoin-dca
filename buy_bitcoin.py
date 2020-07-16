@@ -45,4 +45,4 @@ while True:
   print()
   while datetime.datetime.now() < next_buy_datetime:
     time.sleep(1)
-  next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
+  next_buy_datetime = next_buy_datetime + datetime.timedelta(0, DCA_FREQUENCY)
