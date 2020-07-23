@@ -7,9 +7,9 @@ class EmailNotification:
         self.sender_password = sender_password
         self.receiver_email = receiver_email
 
-    def SendEmailNotification(self, unwithdrawn_buy_orders, target_address):
+    def SendEmailNotification(self, unwithdrawn_buy_orders):
         subject = datetime.now().strftime("%Y-%m-%d") + " Bitcoin DCA summary",
-        body = self.generateDCASummary(unwithdrawn_buy_orders, target_address)
+        body = self.generateDCASummary(unwithdrawn_buy_orders)
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         try:
@@ -33,7 +33,7 @@ class EmailNotification:
         except Exception as e:
             print('Send email failed: ' + e)
 
-    def generateDCASummary(self, unwithdrawn_buy_orders, target_address):
+    def generateDCASummary(self, unwithdrawn_buy_orders):
         summary = ""
         total_cost, total_size = 0, 0
         for order in unwithdrawn_buy_orders:
@@ -43,8 +43,4 @@ class EmailNotification:
             summary += f"{local_datetime.strftime('%Y-%m-%d %H:%M:%S')}, ${round(cost, 2)}, ₿{size}, ${round( cost / size, 2 )}\n"
             total_cost += cost
             total_size += size
-
-        summary = f"Average Price: {round( total_cost / total_size, 2 )}\n" \
-                  + f"Withdrawing Bitcoin to: {target_address}\n\n" \
-                  + summary 
-        return summary
+        return f"Average Price: {round( total_cost / total_size, 2 )}\n\n" + summary 
