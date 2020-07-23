@@ -1,6 +1,5 @@
 import smtplib
 from datetime import datetime, timezone
-from email.mime.text import MIMEText
 
 class EmailNotification:
     def __init__(self, sender_user_name, sender_password, receiver_email):
@@ -25,8 +24,7 @@ class EmailNotification:
             server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             server.ehlo()
             server.login(self.sender_user_name, self.sender_password)
-            
-            server.sendmail(self.sender_user_name, self.receiver_email, MIMEText(email_text, "plain"))
+            server.sendmail(self.sender_user_name, self.receiver_email, email_text)
             server.close()
 
             print(f'Sent email to {self.receiver_email}:')
@@ -42,7 +40,7 @@ class EmailNotification:
             order_datetime, cost, size = order
             utc_datetime = datetime.strptime(order_datetime, '%Y-%m-%dT%H:%M:%S.%fZ')
             local_datetime = utc_datetime.replace(tzinfo=timezone.utc).astimezone(tz=None)
-            summary += f"{local_datetime.strftime('%Y-%m-%d %H:%M:%S')}, ${round(cost, 2)}, ₿{size}, ${round( cost / size, 2 )}\n"
+            summary += f"{local_datetime.strftime('%Y-%m-%d %H:%M:%S')}, ${round(cost, 2)}, {size}, ${round( cost / size, 2 )}\n"
             total_cost += cost
             total_size += size
         return f"Average Price: {round( total_cost / total_size, 2 )}\n\n" + summary 
