@@ -8,7 +8,7 @@ class EmailNotification:
         self.receiver_email = receiver_email
 
     def sendEmailNotification(self, unwithdrawn_buy_orders):
-        subject = datetime.now().strftime("%Y-%m-%d") + " Bitcoin DCA summary",
+        subject = datetime.now().strftime("%Y-%m-%d") + " Bitcoin DCA summary"
         body = self.generateDCASummary(unwithdrawn_buy_orders)
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
