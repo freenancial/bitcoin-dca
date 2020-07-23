@@ -36,7 +36,7 @@ while True:
   try:
     coinbase_pro.showBalance()
 
-    if AUTO_WITHDRAWL and coinbase_pro.getRecentBuysCount() >= WITHDRAW_EVERY_X_BUY:
+    if AUTO_WITHDRAWL and coinbase_pro.getUnwithdrawnBuysCount() >= WITHDRAW_EVERY_X_BUY:
       coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
       address_selector.incrementAddressIndex()
   except Exception as e:

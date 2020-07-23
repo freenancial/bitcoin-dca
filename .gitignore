@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+bitcoin_dca.db
+bitcoin_dca.db-journal
