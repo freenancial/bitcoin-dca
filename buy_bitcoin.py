@@ -44,7 +44,7 @@ while True:
 
     if AUTO_WITHDRAWL and coinbase_pro.getUnwithdrawnBuysCount() >= WITHDRAW_EVERY_X_BUY:
       if email_notification is not None:
-        email_notification.SendEmailNotification(coinbase_pro.db_manager.getUnwithdrawnBuyOrders())
+        email_notification.sendEmailNotification(coinbase_pro.db_manager.getUnwithdrawnBuyOrders())
       coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
       address_selector.incrementAddressIndex()
   except Exception as e:

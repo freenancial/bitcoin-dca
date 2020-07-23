@@ -1,5 +1,6 @@
 import smtplib
 from datetime import datetime, timezone
+from email.mime.text import MIMEText
 
 class EmailNotification:
     def __init__(self, sender_user_name, sender_password, receiver_email):
@@ -7,7 +8,7 @@ class EmailNotification:
         self.sender_password = sender_password
         self.receiver_email = receiver_email
 
-    def SendEmailNotification(self, unwithdrawn_buy_orders):
+    def sendEmailNotification(self, unwithdrawn_buy_orders):
         subject = datetime.now().strftime("%Y-%m-%d") + " Bitcoin DCA summary",
         body = self.generateDCASummary(unwithdrawn_buy_orders)
 
@@ -24,7 +25,8 @@ class EmailNotification:
             server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
             server.ehlo()
             server.login(self.sender_user_name, self.sender_password)
-            server.sendmail(self.sender_user_name, self.receiver_email, email_text)
+            
+            server.sendmail(self.sender_user_name, self.receiver_email, MIMEText(email_text, "plain"))
             server.close()
 
             print(f'Sent email to {self.receiver_email}:')
