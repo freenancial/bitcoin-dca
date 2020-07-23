@@ -15,3 +15,9 @@ MASTER_PUBLIC_KEY = 'xpubxxx'
 # The beginning address that BTC auto withdraw to. If set to None, the first address
 # derived from MASTER_PUBLIC_KEY will be used as the BEGINNING_ADDRESS.
 BEGINNING_ADDRESS = None
+
+# If gmail user name is not None, bitcoin-dca will ask you to provide password of the gmail account.
+# After setup, bitcoin-dca will send out daily summary email to EMAIL_NOTICE_RECEIVER
+GMAIL_USER_NAME = None
+# The receiver of daily summary email.
+EMAIL_NOTICE_RECEIVER = 'xxx@xxx.com'
