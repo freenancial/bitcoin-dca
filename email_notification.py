@@ -40,7 +40,7 @@ class EmailNotification:
             order_datetime, cost, size = order
             utc_datetime = datetime.strptime(order_datetime, '%Y-%m-%dT%H:%M:%S.%fZ')
             local_datetime = utc_datetime.replace(tzinfo=timezone.utc).astimezone(tz=None)
-            summary += f"{local_datetime.strftime('%Y-%m-%d %H:%M:%S')}, ${round(cost, 2)}, {size}, ${round( cost / size, 2 )}\n"
+            summary += f"{local_datetime.strftime('%m-%d %H:%M')}, ${round(cost, 2)}, {size}, ${round( cost / size, 0 )}\n"
             total_cost += cost
             total_size += size
         return f"Average Price: {round( total_cost / total_size, 2 )}\n\n" + summary 
