@@ -117,15 +117,3 @@ class CoinbasePro:
 
   def getBitcoinPrice(self):
     return float(self.auth_client.get_product_order_book('BTC-USD', level=1)['bids'][0][0])
-
-  def generateDCASummary(self):
-    unwithdrawn_buy_orders = self.db_manager.getUnwithdrawnBuyOrders()
-    summary = ""
-    total_cost, total_size = 0, 0
-    for order in unwithdrawn_buy_orders:
-      date, cost, size = order
-      summary += f"{date}, {round(cost, 2)}, {size}, {round( cost / size, 2 )}\n"
-      total_cost += cost
-      total_size += size
-    summary += f"Average Price: {round( total_cost / total_size, 2 )}\n"
-    return summary
