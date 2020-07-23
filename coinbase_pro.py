@@ -2,10 +2,12 @@ import cbpro
 import time
 import itertools
 import math
+import db_manager
 
 class CoinbasePro:
   def __init__(self, api_key, api_secret, passphrase):
     self.auth_client = cbpro.AuthenticatedClient(api_key, api_secret, passphrase)
+    self.db_manager = db_manager.DBManager()
 
   def refresh(self):
     self.accounts = self.auth_client.get_accounts()
@@ -42,9 +44,8 @@ class CoinbasePro:
     print("BTC balance: ₿{}".format(float(self.btc_account['balance'])))
     print()
 
-  def getRecentBuysCount(self):
-    btc_account_history = self.auth_client.get_account_history(self.btc_account['id'])
-    return sum(1 for _ in itertools.takewhile(lambda x: x['type'] == 'match', btc_account_history))
+  def getUnwithdrawnBuysCount(self):
+    return self.db_manager.getUnwithdrawnBuysCount()
 
   def depositUSDCFromCoinbase(self, amount):
     self.refresh()
@@ -81,6 +82,11 @@ class CoinbasePro:
       time.sleep(1)
       order_result = self.auth_client.get_order(order_result['id'])
     self.printOrderResult(order_result)
+    self.db_manager.saveBuyTransaction(
+      date = order_result['done_at'],
+      cost = round( float(order_result['specified_funds']), 2 ),
+      size = order_result['filled_size'],
+    )
     time.sleep(5)
 
   def usdc_balance(self):
@@ -90,16 +96,17 @@ class CoinbasePro:
     return float(self.usd_account['balance'])
 
   def printOrderResult(self, order_result):
-    print(f"  Size: \t{ round( float(order_result['specified_funds']), 2 )}")
-    print(f"  Filled: \t{order_result['filled_size']}")
-    print(f"  Filled Price: {round( float(order_result['funds']) / float(order_result['filled_size']), 2 )}")
-    print(f"  Fee: \t\t{order_result['fill_fees']}")
-    print(f"  Date: \t{order_result['done_at']}")
+    print(f"  Cost: \t{ round( float(order_result['specified_funds']), 2 )}")
+    print(f"  Size: \t{ order_result['filled_size'] }")
+    print(f"  Price: \t{ round( float(order_result['funds']) / float(order_result['filled_size']), 2 ) }")
+    print(f"  Fee: \t\t{ order_result['fill_fees'] }")
+    print(f"  Date: \t{ order_result['done_at'] }")
 
   def withdrawBitcoin(self, amount, address):
     print(f"Withdrawing ₿{amount} Bitcoin to address {address} ...")
     withdraw_result = self.auth_client.crypto_withdraw(amount, 'BTC', address)
     print(withdraw_result)
+    self.db_manager.updateWithdrawAddressForBuyOrders(address)
     print()
 
   def getBitcoinWorth(self):
