@@ -12,6 +12,10 @@ echo "Your Coinbase Pro API passphrase:"
 read -s PASSPHRASE
 export PASSPHRASE
 
+echo "Gmail user password:"
+read -s GMAIL_PASSWORD
+export GMAIL_PASSWORD
+
 export PYCOIN_CACHE_DIR=~/.pycoin_cache
 export PYCOIN_BTC_PROVIDERS="blockchain.info blockexplorer.com chain.so"
 export PYTHONPATH="./coinbasepro_python:./pycoin"

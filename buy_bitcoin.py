@@ -10,19 +10,17 @@ from email_notification import EmailNotification
 import os
 import time
 import datetime
-import getpass
 
 API_KEY = os.environ['API_KEY']
 API_SECRET = os.environ['API_SECRET']
 PASSPHRASE = os.environ['PASSPHRASE']
+GMAIL_PASSWORD = os.environ['GMAIL_PASSWORD']
 address_selector = AddressSelector(MASTER_PUBLIC_KEY, BEGINNING_ADDRESS)
 
 next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
 
 if GMAIL_USER_NAME is not None:
-  print(f"Please provide password of gmail user {GMAIL_USER_NAME} for sending daily summary email.")
-  gmail_pass = getpass.getpass()
-  email_notification = EmailNotification(GMAIL_USER_NAME, gmail_pass, EMAIL_NOTICE_RECEIVER)
+  email_notification = EmailNotification(GMAIL_USER_NAME, GMAIL_PASSWORD, EMAIL_NOTICE_RECEIVER)
 
 while True:
   print('--------------------------------------------------')
