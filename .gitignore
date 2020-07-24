@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 bitcoin_dca.db
 bitcoin_dca.db-journal
+nohup.out

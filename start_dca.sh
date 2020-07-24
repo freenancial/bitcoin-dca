@@ -18,8 +18,8 @@ export GMAIL_PASSWORD
 
 export PYCOIN_CACHE_DIR=~/.pycoin_cache
 export PYCOIN_BTC_PROVIDERS="blockchain.info blockexplorer.com chain.so"
-export PYTHONPATH="./coinbasepro_python:./pycoin"
+export PYTHONPATH="./coinbasepro_python:./pycoin:./bitcoin_dca"
 
 source venv/bin/activate
-nohup python3 -u ./buy_bitcoin.py &
+nohup python -u bitcoin_dca/buy_bitcoin.py &
 echo "Bitcoin DCA started, check 'log/bitcoin_dca.log' for log data."
