@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 from config import DCA_USD_AMOUNT, DCA_FREQUENCY
 from config import AUTO_WITHDRAWL, WITHDRAW_EVERY_X_BUY, MASTER_PUBLIC_KEY, BEGINNING_ADDRESS
+from config import GMAIL_USER_NAME, EMAIL_NOTICE_RECEIVER
 
 from coinbase_pro import CoinbasePro
 from address_selector import AddressSelector
+from email_notification import EmailNotification
 
 import os
 import time
@@ -12,9 +14,13 @@ import datetime
 API_KEY = os.environ['API_KEY']
 API_SECRET = os.environ['API_SECRET']
 PASSPHRASE = os.environ['PASSPHRASE']
+GMAIL_PASSWORD = os.environ['GMAIL_PASSWORD']
 address_selector = AddressSelector(MASTER_PUBLIC_KEY, BEGINNING_ADDRESS)
 
 next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
+
+if GMAIL_USER_NAME is not None:
+  email_notification = EmailNotification(GMAIL_USER_NAME, GMAIL_PASSWORD, EMAIL_NOTICE_RECEIVER)
 
 while True:
   print('--------------------------------------------------')
@@ -37,6 +43,8 @@ while True:
     coinbase_pro.showBalance()
 
     if AUTO_WITHDRAWL and coinbase_pro.getUnwithdrawnBuysCount() >= WITHDRAW_EVERY_X_BUY:
+      if email_notification is not None:
+        email_notification.sendEmailNotification(coinbase_pro.db_manager.getUnwithdrawnBuyOrders())
       coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
       address_selector.incrementAddressIndex()
   except Exception as e:

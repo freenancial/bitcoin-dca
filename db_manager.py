@@ -37,6 +37,14 @@ class DBManager:
         ''')
         return c.fetchone()[0]
 
+    def getUnwithdrawnBuyOrders(self):
+        c = self.conn.cursor()
+        c.execute('''
+            SELECT date, cost, size from BuyOrders
+            WHERE withdraw_address = ''
+        ''')
+        return [order for order in c]
+
     def printAllBuyTransactions(self):
         c = self.conn.cursor()
         c.execute('''
