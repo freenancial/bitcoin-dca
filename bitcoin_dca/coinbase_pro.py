@@ -1,9 +1,11 @@
-import cbpro
+from coinbasepro_python import cbpro
+
+from logger import Logger
+import db_manager
+
 import time
 import itertools
 import math
-import db_manager
-from logger import Logger
 
 class CoinbasePro:
   def __init__(self, api_key, api_secret, passphrase):
