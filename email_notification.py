@@ -43,4 +43,7 @@ class EmailNotification:
             summary += f"{local_datetime.strftime('%m-%d %H:%M')}, ${round(cost, 2)}, {size}, ${round( cost / size, 0 )}\n"
             total_cost += cost
             total_size += size
-        return f"Average Price: {round( total_cost / total_size, 2 )}\n\n" + summary 
+        return f"Average Price: {round( total_cost / total_size, 2 )}\n" \
+               + f"Total Cost: {round( total_cost, 2 )}\n" \
+               + f"Total Size: {total_size}\n\n" \
+               + summary 
