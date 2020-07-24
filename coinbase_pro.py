@@ -39,12 +39,12 @@ class CoinbasePro:
 
   def showBalance(self):
     self.refresh()
-    self.logger.info()
+    self.logger.info('')
     self.logger.info("Coinbase USDC balance: ${:.2f}".format(float(self.coinbase_usdc_account['balance'])))
     self.logger.info("USDC balance: ${:.2f}".format( math.floor( self.usdc_balance() * 100) / 100 ) )
     self.logger.info("USD balance: ${:.2f}".format( math.floor( self.usd_balance() * 100) / 100 ) )
     self.logger.info("BTC balance: ₿{}".format(float(self.btc_account['balance'])))
-    self.logger.info()
+    self.logger.info('')
 
   def getUnwithdrawnBuysCount(self):
     return self.db_manager.getUnwithdrawnBuysCount()
@@ -109,7 +109,7 @@ class CoinbasePro:
     withdraw_result = self.auth_client.crypto_withdraw(amount, 'BTC', address)
     self.logger.info(withdraw_result)
     self.db_manager.updateWithdrawAddressForBuyOrders(address)
-    self.logger.info()
+    self.logger.info('')
 
   def getBitcoinWorth(self):
     return self.getBitcoinBalance() * self.getBitcoinPrice()

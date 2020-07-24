@@ -53,7 +53,7 @@ while True:
 
   # Wait for next buy time
   logger.info(f"Waiting until {next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} to buy ${DCA_USD_AMOUNT} Bitcoin...")
-  logger.info()
+  logger.info('')
   while datetime.datetime.now() < next_buy_datetime:
     time.sleep(1)
   next_buy_datetime = next_buy_datetime + datetime.timedelta(0, DCA_FREQUENCY)
