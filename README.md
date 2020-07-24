@@ -16,4 +16,4 @@ To stop Bitcoin DCA:
 
 To adjust the configuration of Bitcoin DCA:
 
-Modify `config.py`
+Modify `bitcoin_dca/config.py`
