@@ -100,7 +100,7 @@ class CoinbasePro:
     Logger.info(f"  Cost: \t{ round( float(order_result['specified_funds']), 2 )}")
     Logger.info(f"  Size: \t{ order_result['filled_size'] }")
     Logger.info(f"  Price: \t{ round( float(order_result['funds']) / float(order_result['filled_size']), 2 ) }")
-    Logger.info(f"  Fee: \t\t{ order_result['fill_fees'] }")
+    Logger.info(f"  Fee: \t{ order_result['fill_fees'] }")
     Logger.info(f"  Date: \t{ order_result['done_at'] }")
 
   def withdrawBitcoin(self, amount, address):
