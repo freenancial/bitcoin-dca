@@ -6,6 +6,7 @@ from config import GMAIL_USER_NAME, EMAIL_NOTICE_RECEIVER
 from coinbase_pro import CoinbasePro
 from address_selector import AddressSelector
 from email_notification import EmailNotification
+from logger import Logger
 
 import os
 import time
@@ -16,15 +17,15 @@ API_SECRET = os.environ['API_SECRET']
 PASSPHRASE = os.environ['PASSPHRASE']
 GMAIL_PASSWORD = os.environ['GMAIL_PASSWORD']
 address_selector = AddressSelector(MASTER_PUBLIC_KEY, BEGINNING_ADDRESS)
-
+logger = Logger()
 next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
 
 if GMAIL_USER_NAME is not None:
   email_notification = EmailNotification(GMAIL_USER_NAME, GMAIL_PASSWORD, EMAIL_NOTICE_RECEIVER)
 
 while True:
-  print('--------------------------------------------------')
-  print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+  logger.info('--------------------------------------------------')
+  logger.info(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
   coinbase_pro = CoinbasePro(API_KEY, API_SECRET, PASSPHRASE)
   # Buy Bitcoin
@@ -32,9 +33,9 @@ while True:
     coinbase_pro.showBalance()
     coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
   except Exception as e:
-    print(f"Error: {str(e)}")
-    print("Waiting for 60 seconds to retry ...")
-    print()
+    logger.error(f"Error: {str(e)}")
+    logger.error("Waiting for 60 seconds to retry ...")
+    logger.error()
     time.sleep(60)
     continue
   
@@ -48,11 +49,11 @@ while True:
       coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(), address_selector.getWithdrawAddress())
       address_selector.incrementAddressIndex()
   except Exception as e:
-    print(f"Error: {str(e)}")
+    logger.error(f"Error: {str(e)}")
 
   # Wait for next buy time
-  print(f"Waiting until {next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} to buy ${DCA_USD_AMOUNT} Bitcoin...")
-  print()
+  logger.info(f"Waiting until {next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} to buy ${DCA_USD_AMOUNT} Bitcoin...")
+  logger.info()
   while datetime.datetime.now() < next_buy_datetime:
     time.sleep(1)
   next_buy_datetime = next_buy_datetime + datetime.timedelta(0, DCA_FREQUENCY)
