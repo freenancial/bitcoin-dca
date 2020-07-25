@@ -2,6 +2,7 @@ import sqlite3
 
 DB_NAME = 'bitcoin_dca.db'
 
+
 class DBManager:
     def __init__(self):
         self.conn = sqlite3.connect(DB_NAME)
@@ -43,7 +44,7 @@ class DBManager:
             SELECT date, cost, size from BuyOrders
             WHERE withdraw_address = ''
         ''')
-        return [order for order in c]
+        return list(c)
 
     def printAllBuyTransactions(self):
         c = self.conn.cursor()
