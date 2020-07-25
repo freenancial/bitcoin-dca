@@ -16,6 +16,7 @@ from logging.handlers import TimedRotatingFileHandler
 class Logger:
     """A global singleton Logger class.
     """
+
     _logger = None
 
     @staticmethod
@@ -60,15 +61,15 @@ class Logger:
         """
         if Logger._logger is None:
             # Prepare log directory
-            if not os.path.isdir('log'):
-                os.mkdir('log')
+            if not os.path.isdir("log"):
+                os.mkdir("log")
             # Prepare the logger
-            handler = TimedRotatingFileHandler(filename='log/bitcoin_dca.log',
-                                               when='midnight',
-                                               backupCount=365)
-            formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+            handler = TimedRotatingFileHandler(
+                filename="log/bitcoin_dca.log", when="midnight", backupCount=365
+            )
+            formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
             handler.setFormatter(formatter)
-            logger = logging.getLogger('BitcoinDCALogger')
+            logger = logging.getLogger("BitcoinDCALogger")
             logger.addHandler(handler)
             logger.setLevel(logging.DEBUG)
             Logger._logger = logger

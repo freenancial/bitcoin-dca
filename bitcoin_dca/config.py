@@ -13,7 +13,7 @@ WITHDRAW_EVERY_X_BUY = 20
 # The master public key to derive BTC addresess that utilized in auto withdraw.
 # Only addresses with empty balance wil be used, and each address will be used
 # only once.
-MASTER_PUBLIC_KEY = 'zpub...'
+MASTER_PUBLIC_KEY = "zpub..."
 # The beginning address that BTC auto withdraw to. If set to None, the first address
 # derived from MASTER_PUBLIC_KEY will be used as the BEGINNING_ADDRESS.
 BEGINNING_ADDRESS = None
@@ -22,4 +22,4 @@ BEGINNING_ADDRESS = None
 # from GMAIL_USER_NAME to EMAIL_NOTICE_RECEIVER.
 GMAIL_USER_NAME = None
 # The receiver of daily summary email.
-EMAIL_NOTICE_RECEIVER = 'xxx@xxx.com'
+EMAIL_NOTICE_RECEIVER = "xxx@xxx.com"
