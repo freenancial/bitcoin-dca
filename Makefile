@@ -7,4 +7,4 @@ start_dca:
 	./scripts/start_dca.sh
 
 stop_dca:
-	kill $(ps aux|grep "[b]uy_bitcoin.py" |  awk '{print $2}')
+	./scripts/stop_dca.sh
