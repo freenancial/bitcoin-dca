@@ -1,6 +1,6 @@
 [submodule "coinbasepro-python"]
-	path = coinbasepro_python
+	path = bitcoin_dca/coinbasepro_python
 	url = git@github.com:freenancial/coinbasepro-python.git
 [submodule "pycoin"]
-	path = pycoin
+	path = bitcoin_dca/libpycoin
 	url = git@github.com:freenancial/pycoin.git

@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+import sys, os
+sys.path.append( os.path.join(os.path.dirname(__file__), "coinbasepro_python") )
+sys.path.append( os.path.join(os.path.dirname(__file__), "libpycoin") )
+
 from config import DCA_USD_AMOUNT, DCA_FREQUENCY
 from config import AUTO_WITHDRAWL, WITHDRAW_EVERY_X_BUY, MASTER_PUBLIC_KEY, BEGINNING_ADDRESS
 from config import GMAIL_USER_NAME, EMAIL_NOTICE_RECEIVER
@@ -16,7 +20,8 @@ API_KEY = os.environ['API_KEY']
 API_SECRET = os.environ['API_SECRET']
 PASSPHRASE = os.environ['PASSPHRASE']
 GMAIL_PASSWORD = os.environ['GMAIL_PASSWORD']
-address_selector = AddressSelector(MASTER_PUBLIC_KEY, BEGINNING_ADDRESS)
+if AUTO_WITHDRAWL:
+  address_selector = AddressSelector(MASTER_PUBLIC_KEY, BEGINNING_ADDRESS)
 next_buy_datetime = datetime.datetime.now() + datetime.timedelta(0, DCA_FREQUENCY)
 
 if GMAIL_USER_NAME is not None:
