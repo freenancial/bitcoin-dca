@@ -2,6 +2,7 @@ import sqlite3
 
 DB_NAME = 'bitcoin_dca.db'
 
+
 class DBManager:
     def __init__(self):
         self.conn = sqlite3.connect(DB_NAME)

@@ -1,6 +1,7 @@
 import smtplib
 from datetime import datetime, timezone
 
+
 class EmailNotification:
     def __init__(self, sender_user_name, sender_password, receiver_email):
         self.sender_user_name = sender_user_name
@@ -46,4 +47,4 @@ class EmailNotification:
         return f"Average Price: {round( total_cost / total_size, 2 )}\n" \
                + f"Total Cost: {round( total_cost, 2 )}\n" \
                + f"Total Size: {total_size}\n\n" \
-               + summary 
+               + summary
