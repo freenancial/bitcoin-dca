@@ -1,6 +1,7 @@
 from libpycoin.pycoin.services.providers import spendables_for_address
 from libpycoin.pycoin.symbols.btc import network as BTC
 
+
 class AddressSelector:
     def __init__(self, master_public_key, beginning_address=None):
         self.address_index = 0
