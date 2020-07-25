@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
+
+"""The module is the entry point of bitcoin-dca.
+"""
 import datetime
 import os
 import time
 
 from address_selector import AddressSelector
 from coinbase_pro import CoinbasePro
-from config import DCA_USD_AMOUNT, DCA_FREQUENCY
-from config import AUTO_WITHDRAWL, WITHDRAW_EVERY_X_BUY, MASTER_PUBLIC_KEY, BEGINNING_ADDRESS
-from config import GMAIL_USER_NAME, EMAIL_NOTICE_RECEIVER
-
+from config import (AUTO_WITHDRAWL, BEGINNING_ADDRESS, DCA_FREQUENCY,
+                    DCA_USD_AMOUNT, EMAIL_NOTICE_RECEIVER, GMAIL_USER_NAME,
+                    MASTER_PUBLIC_KEY, WITHDRAW_EVERY_X_BUY)
 from email_notification import EmailNotification
 from logger import Logger
-
 
 API_KEY = os.environ['API_KEY']
 API_SECRET = os.environ['API_SECRET']
@@ -33,9 +34,10 @@ while True:
     try:
         coinbase_pro.showBalance()
         coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
-    except Exception as e:
-        Logger.error(f"Error: {str(e)}")
-        Logger.error("Waiting for 60 seconds to retry ...")
+    except Exception as error:  # pylint: disable=broad-except
+        Logger.error('Unable to buy Bitcoin')
+        Logger.error(f'Error: {str(error)}')
+        Logger.error('Waiting for 60 seconds to retry ...')
         Logger.error('')
         time.sleep(60)
         continue
@@ -51,12 +53,13 @@ while True:
             coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(),
                                          address_selector.getWithdrawAddress())
             address_selector.incrementAddressIndex()
-    except Exception as e:
-        Logger.error(f"Error: {str(e)}")
+    except Exception as error:  # pylint: disable=broad-except
+        Logger.error('Unable to withdraw Bitcoin')
+        Logger.error(f"Error: {str(error)}")
 
     # Wait for next buy time
-    Logger.info(
-        f"Waiting until {next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} to buy ${DCA_USD_AMOUNT} Bitcoin...")
+    Logger.info(f"Waiting until {next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
+                f"to buy ${DCA_USD_AMOUNT} Bitcoin...")
     Logger.info('')
     while datetime.datetime.now() < next_buy_datetime:
         time.sleep(1)

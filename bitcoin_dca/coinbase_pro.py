@@ -29,8 +29,7 @@ class CoinbasePro:
         try:
             return next(account for account in self.accounts if account['currency'] == currency)
         except Exception as e:
-            Logger.error(
-                f"Failed to get account info of currency {currency} from accounts:")
+            Logger.error(f"Failed to get account info for {currency} from accounts:")
             Logger.error(self.accounts)
             raise e
 
@@ -38,8 +37,7 @@ class CoinbasePro:
         try:
             return next(account for account in self.coinbase_accounts if account['currency'] == currency)
         except Exception as e:
-            Logger.error(
-                f"Failed to get account info of currency {currency} from coinbase_accounts:")
+            Logger.error(f"Failed to get account info for {currency} from coinbase_accounts:")
             Logger.error(self.coinbase_accounts)
             raise e
 
