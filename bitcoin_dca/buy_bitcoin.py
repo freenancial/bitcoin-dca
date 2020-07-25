@@ -50,7 +50,7 @@ while True:
             if email_notification is not None:
                 email_notification.sendEmailNotification(
                     coinbase_pro.db_manager.getUnwithdrawnBuyOrders())
-            coinbase_pro.withdrawBitcoin(coinbase_pro.getBitcoinBalance(),
+            coinbase_pro.withdrawBitcoin(coinbase_pro.btcAccount().balance,
                                          address_selector.getWithdrawAddress())
             address_selector.incrementAddressIndex()
     except Exception as error:  # pylint: disable=broad-except

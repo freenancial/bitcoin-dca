@@ -12,7 +12,7 @@ class EmailNotification:
 
     def sendEmailNotification(self, unwithdrawn_buy_orders):
         subject = datetime.now().strftime("%Y-%m-%d") + " Bitcoin DCA summary"
-        body = self.generateDCASummary(unwithdrawn_buy_orders)
+        body = EmailNotification.generateDCASummary(unwithdrawn_buy_orders)
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         try:
@@ -37,7 +37,8 @@ class EmailNotification:
             Logger.error('Unable to send email')
             Logger.error(f'error: {error}')
 
-    def generateDCASummary(self, unwithdrawn_buy_orders):
+    @staticmethod
+    def generateDCASummary(unwithdrawn_buy_orders):
         summary = ""
         total_cost, total_size = 0, 0
         for order in unwithdrawn_buy_orders:
