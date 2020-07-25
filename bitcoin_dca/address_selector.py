@@ -1,3 +1,4 @@
+import _path_init  # pylint: disable=unused-import
 from libpycoin.pycoin.services.providers import spendables_for_address
 from libpycoin.pycoin.symbols.btc import network as BTC
 

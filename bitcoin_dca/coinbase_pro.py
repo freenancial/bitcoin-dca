@@ -1,16 +1,18 @@
-from coinbasepro_python import cbpro
-
-from logger import Logger
-import db_manager
-
-import time
 import itertools
 import math
+import time
+
+import _path_init  # pylint: disable=unused-import
+from coinbasepro_python import cbpro
+
+import db_manager
+from logger import Logger
 
 
 class CoinbasePro:
     def __init__(self, api_key, api_secret, passphrase):
-        self.auth_client = cbpro.AuthenticatedClient(api_key, api_secret, passphrase)
+        self.auth_client = cbpro.AuthenticatedClient(
+            api_key, api_secret, passphrase)
         self.db_manager = db_manager.DBManager()
 
     def refresh(self):
@@ -27,7 +29,8 @@ class CoinbasePro:
         try:
             return next(account for account in self.accounts if account['currency'] == currency)
         except Exception as e:
-            Logger.error(f"Failed to get account info of currency {currency} from accounts:")
+            Logger.error(
+                f"Failed to get account info of currency {currency} from accounts:")
             Logger.error(self.accounts)
             raise e
 
@@ -45,9 +48,12 @@ class CoinbasePro:
         Logger.info('')
         Logger.info("Coinbase USDC balance: ${:.2f}".format(
             float(self.coinbase_usdc_account['balance'])))
-        Logger.info("USDC balance: ${:.2f}".format(math.floor(self.usdc_balance() * 100) / 100))
-        Logger.info("USD balance: ${:.2f}".format(math.floor(self.usd_balance() * 100) / 100))
-        Logger.info("BTC balance: ₿{}".format(float(self.btc_account['balance'])))
+        Logger.info("USDC balance: ${:.2f}".format(
+            math.floor(self.usdc_balance() * 100) / 100))
+        Logger.info("USD balance: ${:.2f}".format(
+            math.floor(self.usd_balance() * 100) / 100))
+        Logger.info("BTC balance: ₿{}".format(
+            float(self.btc_account['balance'])))
         Logger.info('')
 
     def getUnwithdrawnBuysCount(self):
@@ -58,7 +64,8 @@ class CoinbasePro:
 
         amount = math.ceil(amount * 100) / 100
         Logger.info(f"Depositing ${amount} USDC from Coinbase ...")
-        self.auth_client.coinbase_deposit(amount, 'USDC', self.coinbase_usdc_account['id'])
+        self.auth_client.coinbase_deposit(
+            amount, 'USDC', self.coinbase_usdc_account['id'])
         time.sleep(5)
         Logger.info('  Done')
 
@@ -83,7 +90,8 @@ class CoinbasePro:
 
         Logger.info(f"Buying ${usd_amount} Bitcoin ...")
         product_id = 'BTC-USD'
-        order_result = self.auth_client.place_market_order(product_id, 'buy', funds=usd_amount)
+        order_result = self.auth_client.place_market_order(
+            product_id, 'buy', funds=usd_amount)
         while not order_result['settled']:
             time.sleep(1)
             order_result = self.auth_client.get_order(order_result['id'])
@@ -102,15 +110,18 @@ class CoinbasePro:
         return float(self.usd_account['balance'])
 
     def printOrderResult(self, order_result):
-        Logger.info(f"  Cost: \t{ round( float(order_result['specified_funds']), 2 )}")
+        Logger.info(
+            f"  Cost: \t{ round( float(order_result['specified_funds']), 2 )}")
         Logger.info(f"  Size: \t{ order_result['filled_size'] }")
-        Logger.info(f"  Price: \t{ round( float(order_result['funds']) / float(order_result['filled_size']), 2 ) }")
+        Logger.info(
+            f"  Price: \t{ round( float(order_result['funds']) / float(order_result['filled_size']), 2 ) }")
         Logger.info(f"  Fee: \t{ order_result['fill_fees'] }")
         Logger.info(f"  Date: \t{ order_result['done_at'] }")
 
     def withdrawBitcoin(self, amount, address):
         Logger.info(f"Withdrawing ₿{amount} Bitcoin to address {address} ...")
-        withdraw_result = self.auth_client.crypto_withdraw(amount, 'BTC', address)
+        withdraw_result = self.auth_client.crypto_withdraw(
+            amount, 'BTC', address)
         Logger.info(withdraw_result)
         self.db_manager.updateWithdrawAddressForBuyOrders(address)
         Logger.info('')

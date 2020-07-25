@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
-import _paths
+import datetime
+import os
+import time
 
+from address_selector import AddressSelector
+from coinbase_pro import CoinbasePro
 from config import DCA_USD_AMOUNT, DCA_FREQUENCY
 from config import AUTO_WITHDRAWL, WITHDRAW_EVERY_X_BUY, MASTER_PUBLIC_KEY, BEGINNING_ADDRESS
 from config import GMAIL_USER_NAME, EMAIL_NOTICE_RECEIVER
 
-from coinbase_pro import CoinbasePro
-from address_selector import AddressSelector
 from email_notification import EmailNotification
 from logger import Logger
 
-import os
-import time
-import datetime
 
 API_KEY = os.environ['API_KEY']
 API_SECRET = os.environ['API_SECRET']
