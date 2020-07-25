@@ -1,0 +1,21 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.3.2
+
+jobs:
+  build-and-test:
+    executor: python/default
+    steps:
+      - checkout
+      - run:
+          name: Setup environment
+          command: make init
+      - run:
+          name: pylint
+          command: source venv/bin/activate && pylint bitcoin_dca/*.py
+
+workflows:
+  main:
+    jobs:
+      - build-and-test
