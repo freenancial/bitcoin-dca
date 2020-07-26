@@ -38,14 +38,19 @@ class bitcoinDCA:
                 MASTER_PUBLIC_KEY, BEGINNING_ADDRESS
             )
         self.db_manager = DBManager()
-        self.next_buy_datetime = self.getLastBuyDatetime()
-        self.updateNextBuyDatetime()
+        self.dca_frequency = datetime.timedelta(
+            day=0,
+            seconds = DCA_FREQUENCY
+        )
+        self.next_buy_datetime = self.calcFirstBuyTime()
 
-    def getLastBuyDatetime(self):
-        last_buy_datetime = self.db_manager.getLastBuyOrderDatetime()
-        if last_buy_datetime:
-            return DBManager.convertOrderDatetime(last_buy_datetime)
-        return datetime.datetime.now()
+    def calcFirstBuyTime(self):
+        last_buy_order_datetime = self.db_manager.getLastBuyOrderDatetime()
+        if last_buy_order_datetime:
+            last_buy_datetime = DBManager.convertOrderDatetime(last_buy_order_datetime)
+        else:
+            last_buy_datetime = datetime.datetime.now()
+        return max(datetime.datetime.now(), last_buy_datetime + self.dca_frequency)
 
     def startDCA(self):
         while True:
@@ -73,17 +78,12 @@ class bitcoinDCA:
             except Exception as error:  # pylint: disable=broad-except
                 Logger.error(f"Withdraw Bitcoin failed: {str(error)}")
 
-            self.updateNextBuyDatetime()
+            self.next_buy_datetime += self.dca_frequency
 
     def timeToWithdraw(self, coinbase_pro):
         return (
             self.address_selector is not None
             and coinbase_pro.getUnwithdrawnBuysCount() >= WITHDRAW_EVERY_X_BUY
-        )
-
-    def updateNextBuyDatetime(self):
-        self.next_buy_datetime = self.next_buy_datetime + datetime.timedelta(
-            0, DCA_FREQUENCY
         )
 
     def sendEmailNotification(self):
@@ -100,9 +100,6 @@ class bitcoinDCA:
         self.address_selector.incrementAddressIndex()
 
     def waitForNextBuyTime(self):
-        if datetime.datetime.now() >= self.next_buy_datetime:
-            return
-
         # Wait for next buy time
         Logger.info(
             f"Waiting until {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
