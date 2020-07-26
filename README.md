@@ -4,15 +4,15 @@
 
 After checking out this repo, please run:
 
-`./setup.sh`
+`make init`
 
 To start Bitcoin DCA:
 
-`./start_dca.sh`
+`make start_dca`
 
 To stop Bitcoin DCA:
 
-`./stop_dca.sh`
+`make stop_dca`
 
 To adjust the configuration of Bitcoin DCA:
 
