@@ -38,7 +38,6 @@ class BitcoinDCA:
                 MASTER_PUBLIC_KEY, BEGINNING_ADDRESS
             )
         self.db_manager = DBManager()
-        self.dca_frequency = datetime.timedelta(0, DCA_FREQUENCY)
         self.next_buy_datetime = self.calcFirstBuyTime()
 
     def calcFirstBuyTime(self):
@@ -47,7 +46,10 @@ class BitcoinDCA:
             last_buy_datetime = DBManager.convertOrderDatetime(last_buy_order_datetime)
         else:
             last_buy_datetime = datetime.datetime.now()
-        return max(datetime.datetime.now(), last_buy_datetime + self.dca_frequency)
+        return max(
+            datetime.datetime.now(),
+            last_buy_datetime + datetime.timedelta(0, DCA_FREQUENCY),
+        )
 
     def startDCA(self):
         while True:
@@ -75,7 +77,7 @@ class BitcoinDCA:
             except Exception as error:  # pylint: disable=broad-except
                 Logger.error(f"Withdraw Bitcoin failed: {str(error)}")
 
-            self.next_buy_datetime += self.dca_frequency
+            self.next_buy_datetime += datetime.timedelta(0, DCA_FREQUENCY)
 
     def timeToWithdraw(self, coinbase_pro):
         return (
