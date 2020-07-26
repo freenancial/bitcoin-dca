@@ -105,6 +105,9 @@ class BitcoinDCA:
         self.address_selector.incrementAddressIndex()
 
     def waitForNextBuyTime(self):
+        if datetime.datetime.now() > self.next_buy_datetime:
+            return
+
         # Wait for next buy time
         Logger.info(
             f"Waiting until {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
