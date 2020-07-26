@@ -38,10 +38,7 @@ class bitcoinDCA:
                 MASTER_PUBLIC_KEY, BEGINNING_ADDRESS
             )
         self.db_manager = DBManager()
-        self.dca_frequency = datetime.timedelta(
-            day=0,
-            seconds = DCA_FREQUENCY
-        )
+        self.dca_frequency = datetime.timedelta(0, DCA_FREQUENCY)
         self.next_buy_datetime = self.calcFirstBuyTime()
 
     def calcFirstBuyTime(self):
