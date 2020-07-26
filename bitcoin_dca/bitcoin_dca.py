@@ -38,6 +38,14 @@ class BitcoinDCA:
             )
         self.db_manager = DBManager()
         self.next_buy_datetime = self.calcFirstBuyTime()
+        self.coinbase_pro = self.newCoinbaseProClient()
+
+    def newCoinbaseProClient(self):
+        return CoinbasePro(
+            self.secrets["api_key"],
+            self.secrets["api_secret"],
+            self.secrets["passphrase"],
+        )
 
     def calcFirstBuyTime(self):
         last_buy_order_datetime = self.db_manager.getLastBuyOrderDatetime()
@@ -56,21 +64,18 @@ class BitcoinDCA:
         Logger.info("--------------------------------------------------")
         Logger.info("Bitcoin DCA started")
         Logger.info("")
+        self.coinbase_pro.showBalance()
 
         while True:
             self.waitForNextBuyTime()
 
             Logger.info("--------------------------------------------------")
-            coinbase_pro = CoinbasePro(
-                self.secrets["api_key"],
-                self.secrets["api_secret"],
-                self.secrets["passphrase"],
-            )
+            self.coinbase_pro = self.newCoinbaseProClient()
 
             # Buy Bitcoin
             try:
-                coinbase_pro.showBalance()
-                coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
+                self.coinbase_pro.showBalance()
+                self.coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
             except Exception as error:  # pylint: disable=broad-except
                 Logger.error(f"Buy Bitcoin failed: {str(error)}")
                 Logger.error("Waiting for 60 seconds to retry ...")
@@ -79,19 +84,19 @@ class BitcoinDCA:
 
             # Show the new balance and withdraw Bitcoin if needed
             try:
-                coinbase_pro.showBalance()
-                if self.timeToWithdraw(coinbase_pro):
+                self.coinbase_pro.showBalance()
+                if self.timeToWithdraw():
                     self.sendEmailNotification()
-                    self.withdrawAllBitcoin(coinbase_pro)
+                    self.withdrawAllBitcoin()
             except Exception as error:  # pylint: disable=broad-except
                 Logger.error(f"Withdraw Bitcoin failed: {str(error)}")
 
             self.next_buy_datetime += datetime.timedelta(0, DCA_FREQUENCY)
 
-    def timeToWithdraw(self, coinbase_pro):
+    def timeToWithdraw(self):
         return (
             self.address_selector is not None
-            and coinbase_pro.getUnwithdrawnBuysCount() >= WITHDRAW_EVERY_X_BUY
+            and self.coinbase_pro.getUnwithdrawnBuysCount() >= WITHDRAW_EVERY_X_BUY
         )
 
     def sendEmailNotification(self):
@@ -100,9 +105,9 @@ class BitcoinDCA:
                 self.db_manager.getUnwithdrawnBuyOrders()
             )
 
-    def withdrawAllBitcoin(self, coinbase_pro):
-        coinbase_pro.withdrawBitcoin(
-            coinbase_pro.btcAccount().balance,
+    def withdrawAllBitcoin(self):
+        self.coinbase_pro.withdrawBitcoin(
+            self.coinbase_pro.btcAccount().balance,
             self.address_selector.getWithdrawAddress(),
         )
         self.address_selector.incrementAddressIndex()
