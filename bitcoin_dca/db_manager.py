@@ -82,4 +82,4 @@ class DBManager:
     def convertOrderDatetime(order_datetime):
         utc_datetime = datetime.strptime(order_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
         local_datetime = utc_datetime.replace(tzinfo=timezone.utc).astimezone(tz=None)
-        return local_datetime
+        return local_datetime.replace(tzinfo=None)
