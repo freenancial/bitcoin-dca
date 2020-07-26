@@ -23,7 +23,7 @@ from email_notification import EmailNotification
 from logger import Logger
 
 
-class bitcoinDCA:
+class BitcoinDCA:
     def __init__(self):
         self.API_KEY = os.environ["API_KEY"]
         self.API_SECRET = os.environ["API_SECRET"]
@@ -108,5 +108,5 @@ class bitcoinDCA:
 
 
 if __name__ == "__main__":
-    bitcoin_dca = bitcoinDCA()
+    bitcoin_dca = BitcoinDCA()
     bitcoin_dca.startDCA()
