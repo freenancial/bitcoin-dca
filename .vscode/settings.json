@@ -12,4 +12,5 @@
     ],
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "black",
 }

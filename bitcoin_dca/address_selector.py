@@ -20,16 +20,22 @@ class AddressSelector:
                     break
                 self.incrementAddressIndex()
             if self.address_index == 1000:
-                raise Exception(f"Unable to find beginning address {beginning_address} with "
-                                f"master public key {master_public_key}")
+                raise Exception(
+                    f"Unable to find beginning address {beginning_address} with "
+                    f"master public key {master_public_key}"
+                )
 
     def getCurrentAddress(self):
-        return self.receiving_public_key.subkey_for_path(str(self.address_index)).address()
+        return self.receiving_public_key.subkey_for_path(
+            str(self.address_index)
+        ).address()
 
     def getWithdrawAddress(self):
-        while len(spendables_for_address(self.getCurrentAddress(), 'BTC')) > 0:
-            Logger.debug(f'Skipping address {self.getCurrentAddress()} since its balance '
-                         'is greater than 0')
+        while len(spendables_for_address(self.getCurrentAddress(), "BTC")) > 0:
+            Logger.debug(
+                f"Skipping address {self.getCurrentAddress()} since its balance "
+                "is greater than 0"
+            )
             self.incrementAddressIndex()
         return self.getCurrentAddress()
 
