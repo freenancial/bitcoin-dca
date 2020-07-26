@@ -4,7 +4,7 @@
 
 After checking out this repo, please run:
 
-`make init`
+`make setup`
 
 To start Bitcoin DCA:
 
