@@ -42,10 +42,11 @@ class BitcoinDCA:
 
     def calcFirstBuyTime(self):
         last_buy_order_datetime = self.db_manager.getLastBuyOrderDatetime()
-        if last_buy_order_datetime:
-            last_buy_datetime = DBManager.convertOrderDatetime(last_buy_order_datetime)
-        else:
-            last_buy_datetime = datetime.datetime.now()
+        # If we have no buy recored, we execute a buy order immediately.
+        if not last_buy_order_datetime:
+            return datetime.datetime.now()
+
+        last_buy_datetime = DBManager.convertOrderDatetime(last_buy_order_datetime)
         return max(
             datetime.datetime.now(),
             last_buy_datetime + datetime.timedelta(0, DCA_FREQUENCY),
