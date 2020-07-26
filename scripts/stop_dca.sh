@@ -1,3 +1,3 @@
 #!/bin/bash
 
-kill $(ps aux|grep "[b]uy_bitcoin.py" |  awk '{print $2}')
+kill $(ps aux|grep "[b]itcoin_dca.py" |  awk '{print $2}')
