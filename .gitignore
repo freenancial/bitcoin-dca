@@ -131,3 +131,4 @@ bitcoin_dca.db
 bitcoin_dca.db-journal
 nohup.out
 bitcoin_dca.secrets
+log

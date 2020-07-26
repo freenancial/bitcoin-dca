@@ -21,17 +21,16 @@ from config import (
 from db_manager import DBManager
 from email_notification import EmailNotification
 from logger import Logger
+from secret import Secret
 
 
 class BitcoinDCA:
     def __init__(self):
-        self.API_KEY = os.environ["API_KEY"]
-        self.API_SECRET = os.environ["API_SECRET"]
-        self.PASSPHRASE = os.environ["PASSPHRASE"]
-
+        encryption_pass = os.environ["ENCRYPTION_PASS"]
+        self.secrets = Secret.decryptAllSecrets(encryption_pass)
         if GMAIL_USER_NAME is not None:
             self.email_notification = EmailNotification(
-                GMAIL_USER_NAME, os.environ["GMAIL_PASSWORD"], EMAIL_NOTICE_RECEIVER
+                GMAIL_USER_NAME, self.secrets["gmail_password"], EMAIL_NOTICE_RECEIVER
             )
         if AUTO_WITHDRAWL:
             self.address_selector = AddressSelector(
@@ -62,7 +61,11 @@ class BitcoinDCA:
             self.waitForNextBuyTime()
 
             Logger.info("--------------------------------------------------")
-            coinbase_pro = CoinbasePro(self.API_KEY, self.API_SECRET, self.PASSPHRASE)
+            coinbase_pro = CoinbasePro(
+                self.secrets["api_key"],
+                self.secrets["api_secret"],
+                self.secrets["passphrase"],
+            )
 
             # Buy Bitcoin
             try:

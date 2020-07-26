@@ -1,12 +1,14 @@
-import getpass
-
 import base64
+import getpass
 import os
+
 import cryptography
+from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.fernet import Fernet
+
+from logger import Logger
 
 
 class Secret:
@@ -61,8 +63,9 @@ class Secret:
             f.close()
 
     @staticmethod
-    def decryptAllSecrets():
-        encryption_pass = getpass.getpass("Password for secrets: ")
+    def decryptAllSecrets(encryption_pass=None):
+        if not encryption_pass:
+            encryption_pass = getpass.getpass("Password for unlocking secrets: ")
         with open("bitcoin_dca.secrets", "r") as f:
             salt_b64_str = f.readline()
             key = Secret.generateEncryptionKey(encryption_pass, salt_b64_str)
@@ -71,7 +74,12 @@ class Secret:
                 api_secret = Secret.decrypt(key, f.readline())
                 passphrase = Secret.decrypt(key, f.readline())
                 gmail_password = Secret.decrypt(key, f.readline())
-                return (api_key, api_secret, passphrase, gmail_password)
+                return {
+                    "api_key": api_key,
+                    "api_secret": api_secret,
+                    "passphrase": passphrase,
+                    "gmail_password": gmail_password,
+                }
             except cryptography.fernet.InvalidToken:
-                print("Password incorrect!")
-                return None
+                Logger.critical("Invalid encryption_pass, unable to unlock secrets!")
+                raise
