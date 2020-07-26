@@ -1,6 +1,7 @@
 import smtplib
-from datetime import datetime, timezone
+from datetime import datetime
 
+from db_manager import DBManager
 from logger import Logger
 
 
@@ -45,10 +46,7 @@ class EmailNotification:
         total_cost, total_size = 0, 0
         for order in unwithdrawn_buy_orders:
             order_datetime, cost, size = order
-            utc_datetime = datetime.strptime(order_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
-            local_datetime = utc_datetime.replace(tzinfo=timezone.utc).astimezone(
-                tz=None
-            )
+            local_datetime = DBManager.convertOrderDatetime(order_datetime)
             summary += (
                 f"{local_datetime.strftime('%m-%d %H:%M')}, ${round(cost, 2)}, "
                 f"{size}, ${round( cost / size, 0 )}\n"

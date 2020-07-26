@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime, timezone
 
 DB_NAME = "bitcoin_dca.db"
 
@@ -58,7 +59,7 @@ class DBManager:
         )
         return list(c)
 
-    def getLastBuyOrderDate(self):
+    def getLastBuyOrderDatetime(self):
         c = self.conn.cursor()
         c.execute(
             """
@@ -76,3 +77,9 @@ class DBManager:
         )
         for buy_order in c:
             print(buy_order)
+
+    @staticmethod
+    def convertOrderDatetime(order_datetime):
+        utc_datetime = datetime.strptime(order_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
+        local_datetime = utc_datetime.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        return local_datetime
