@@ -13,7 +13,7 @@ jobs:
           command: make init
       - run:
           name: pylint
-          command: source venv/bin/activate && pylint bitcoin_dca/*.py
+          command: make lint
 
 workflows:
   main:
