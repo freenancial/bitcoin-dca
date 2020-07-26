@@ -11,8 +11,10 @@ class DBManager:
     def initTables(self):
         c = self.conn.cursor()
         c.execute(
-            """CREATE TABLE if not exists BuyOrders
-                     (date text, cost real, size real, withdraw_address text)"""
+            """
+            CREATE TABLE if not exists BuyOrders
+            (date text, cost real, size real, withdraw_address text)
+            """
         )
         self.conn.commit()
 
@@ -21,7 +23,7 @@ class DBManager:
         c.execute(
             f"""
             INSERT INTO BuyOrders VALUES ('{date}', {cost}, {size}, '')
-        """
+            """
         )
         self.conn.commit()
 
@@ -32,7 +34,7 @@ class DBManager:
             UPDATE BuyOrders
             SET withdraw_address = '{withdraw_address}'
             WHERE withdraw_address = ''
-        """
+            """
         )
         self.conn.commit()
 
@@ -40,9 +42,9 @@ class DBManager:
         c = self.conn.cursor()
         c.execute(
             """
-            SELECT COUNT(*) from BuyOrders
+            SELECT COUNT(*) FROM BuyOrders
             WHERE withdraw_address = ''
-        """
+            """
         )
         return c.fetchone()[0]
 
@@ -50,18 +52,27 @@ class DBManager:
         c = self.conn.cursor()
         c.execute(
             """
-            SELECT date, cost, size from BuyOrders
+            SELECT date, cost, size FROM BuyOrders
             WHERE withdraw_address = ''
-        """
+            """
         )
         return list(c)
+
+    def getLastBuyOrderDate(self):
+        c = self.conn.cursor()
+        c.execute(
+            """
+            SELECT MAX(date) FROM BuyOrders
+            """
+        )
+        return c.fetchone()[0]
 
     def printAllBuyTransactions(self):
         c = self.conn.cursor()
         c.execute(
             """
-            SELECT * from BuyOrders
-        """
+            SELECT * FROM BuyOrders
+            """
         )
         for buy_order in c:
             print(buy_order)
