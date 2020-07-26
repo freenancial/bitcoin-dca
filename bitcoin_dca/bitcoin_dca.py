@@ -52,6 +52,11 @@ class BitcoinDCA:
         )
 
     def startDCA(self):
+        Logger.info("--------------------------------------------------")
+        Logger.info("--------------------------------------------------")
+        Logger.info("Bitcoin DCA started")
+        Logger.info("")
+
         while True:
             self.waitForNextBuyTime()
 
