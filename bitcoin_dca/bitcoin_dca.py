@@ -6,6 +6,7 @@ import datetime
 import os
 import time
 
+import ahr999_index
 from address_selector import AddressSelector
 from coinbase_pro import CoinbasePro
 from config import (
@@ -22,7 +23,6 @@ from db_manager import DBManager
 from email_notification import EmailNotification
 from logger import Logger
 from secret import Secret
-from ahr999_index import Ahr999Index
 
 
 class BitcoinDCA:
@@ -74,9 +74,9 @@ class BitcoinDCA:
 
             # Skip buying bitcoin if ahr999 index is above 1.2
             try:
-                ahr999_index = Ahr999Index.getCurrentValue()
-                Logger.info(f"ahr999_index: {ahr999_index}")
-                if ahr999_index > 1.2:
+                ahr999_index_value = ahr999_index.getCurrentIndexValue()
+                Logger.info(f"ahr999_index: {ahr999_index_value}")
+                if ahr999_index_value > 1.2:
                     Logger.info("ahr999_index is over 1.2")
                     Logger.info("Skip the current bitcoin purchase")
                     self.next_buy_datetime += datetime.timedelta(0, DCA_FREQUENCY)
