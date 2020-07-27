@@ -78,7 +78,7 @@ class BitcoinDCA:
                 Logger.info(f"ahr999_index: {ahr999_index_value}")
                 if ahr999_index_value > 1.2:
                     Logger.info("ahr999_index is over 1.2")
-                    Logger.info("Skip the current bitcoin purchase")
+                    Logger.info("Skip this round of Bitcoin purchase")
                     self.next_buy_datetime += datetime.timedelta(0, DCA_FREQUENCY)
                     continue
             except Exception as error:  # pylint: disable=broad-except
