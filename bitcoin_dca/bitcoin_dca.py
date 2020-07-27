@@ -22,6 +22,7 @@ from db_manager import DBManager
 from email_notification import EmailNotification
 from logger import Logger
 from secret import Secret
+from ahr999_index import Ahr999Index
 
 
 class BitcoinDCA:
@@ -70,9 +71,21 @@ class BitcoinDCA:
             self.waitForNextBuyTime()
 
             Logger.info("--------------------------------------------------")
-            self.coinbase_pro = self.newCoinbaseProClient()
+
+            # Skip buying bitcoin if ahr999 index is above 1.2
+            try:
+                ahr999_index = Ahr999Index.getCurrentValue()
+                Logger.info(f"ahr999_index: {ahr999_index}")
+                if ahr999_index > 1.2:
+                    Logger.info("ahr999_index is over 1.2")
+                    Logger.info("Skip the current bitcoin purchase")
+                    self.next_buy_datetime += datetime.timedelta(0, DCA_FREQUENCY)
+                    continue
+            except Exception as error:  # pylint: disable=broad-except
+                Logger.critical(f"Getting ahr999_index failed: {error}")
 
             # Buy Bitcoin
+            self.coinbase_pro = self.newCoinbaseProClient()
             try:
                 self.coinbase_pro.showBalance()
                 self.coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
