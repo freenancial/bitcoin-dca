@@ -6,6 +6,7 @@ import datetime
 import os
 import time
 
+import ahr999_index
 from address_selector import AddressSelector
 from coinbase_pro import CoinbasePro
 from config import (
@@ -70,9 +71,21 @@ class BitcoinDCA:
             self.waitForNextBuyTime()
 
             Logger.info("--------------------------------------------------")
-            self.coinbase_pro = self.newCoinbaseProClient()
+
+            # Skip buying bitcoin if ahr999 index is above 5.0
+            try:
+                ahr999_index_value = ahr999_index.getCurrentIndexValue()
+                Logger.info(f"ahr999_index: {ahr999_index_value}")
+                if ahr999_index_value > 5.0:
+                    Logger.info("ahr999_index is over 5.0")
+                    Logger.info("Skip this round of Bitcoin purchase")
+                    self.next_buy_datetime += datetime.timedelta(0, DCA_FREQUENCY)
+                    continue
+            except Exception as error:  # pylint: disable=broad-except
+                Logger.critical(f"Getting ahr999_index failed: {error}")
 
             # Buy Bitcoin
+            self.coinbase_pro = self.newCoinbaseProClient()
             try:
                 self.coinbase_pro.showBalance()
                 self.coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
