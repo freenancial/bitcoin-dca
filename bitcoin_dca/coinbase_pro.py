@@ -123,7 +123,7 @@ class CoinbasePro:
                 size=order_result["filled_size"],
             )
         except Exception:  # pylint: disable=broad-except
-            Logger.error(f"Unable to got or parse order_result: {order_result}")
+            Logger.error(f"Unable to fetch or parse order_result: {order_result}")
         time.sleep(5)
 
     def usdc_balance(self):
