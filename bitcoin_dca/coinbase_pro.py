@@ -112,15 +112,18 @@ class CoinbasePro:
         order_result = self.auth_client.place_market_order(
             product_id, "buy", funds=usd_amount
         )
-        while not order_result["settled"]:
-            time.sleep(1)
-            order_result = self.auth_client.get_order(order_result["id"])
-        self.printOrderResult(order_result)
-        self.db_manager.saveBuyTransaction(
-            date=order_result["done_at"],
-            cost=round(float(order_result["specified_funds"]), 2),
-            size=order_result["filled_size"],
-        )
+        try:
+            while not order_result["settled"]:
+                time.sleep(1)
+                order_result = self.auth_client.get_order(order_result["id"])
+            self.printOrderResult(order_result)
+            self.db_manager.saveBuyTransaction(
+                date=order_result["done_at"],
+                cost=round(float(order_result["specified_funds"]), 2),
+                size=order_result["filled_size"],
+            )
+        except Exception:  # pylint: disable=broad-except
+            Logger.error(f"Unable to fetch or parse order_result: {order_result}")
         time.sleep(5)
 
     def usdc_balance(self):
