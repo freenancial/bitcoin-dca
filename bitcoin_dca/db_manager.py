@@ -80,6 +80,9 @@ class DBManager:
 
     @staticmethod
     def convertOrderDatetime(order_datetime):
-        utc_datetime = datetime.strptime(order_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
+        try:
+            utc_datetime = datetime.strptime(order_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
+        except ValueError:
+            utc_datetime = datetime.strptime(order_datetime, "%Y-%m-%dT%H:%M:%SZ")        
         local_datetime = utc_datetime.replace(tzinfo=timezone.utc).astimezone(tz=None)
         return local_datetime.replace(tzinfo=None)
