@@ -6,6 +6,7 @@ import datetime
 import os
 import time
 
+import _path_init  # pylint: disable=unused-import
 import ahr999_index
 from address_selector import AddressSelector
 from coinbase_pro import CoinbasePro
