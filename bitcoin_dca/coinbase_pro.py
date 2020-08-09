@@ -85,9 +85,9 @@ class CoinbasePro:
 
         amount = math.ceil(amount * 100) / 100
         Logger.info(f"Depositing ${amount} USDC from Coinbase ...")
-        self.auth_client.coinbase_deposit(amount, "USDC", self.coinbaseUSDCAccount().id)
+        result = self.auth_client.coinbase_deposit(amount, "USDC", self.coinbaseUSDCAccount().id)
         time.sleep(5)
-        Logger.info("  Done")
+        Logger.info(result)
 
     def convertUSDCToUSD(self, amount):
         self.refresh()
@@ -97,9 +97,9 @@ class CoinbasePro:
             self.depositUSDCFromCoinbase(amount + MIN_USDC_BALANCE - self.usdc_balance())
 
         Logger.info(f"Converting ${amount} USDC to USD ...")
-        self.auth_client.convert_stablecoin(amount, "USDC", "USD")
+        result = self.auth_client.convert_stablecoin(amount, "USDC", "USD")
         time.sleep(5)
-        Logger.info("  Done")
+        Logger.info(result)
 
     def buyBitcoin(self, usd_amount):
         self.refresh()
