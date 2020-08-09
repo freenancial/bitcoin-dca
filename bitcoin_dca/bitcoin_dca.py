@@ -26,7 +26,7 @@ from secret import Secret
 
 
 class BitcoinDCA:
-    def __init__(self, encription_pass):
+    def __init__(self, encryption_pass):
         self.secrets = Secret.decryptAllSecrets(encryption_pass)
         if GMAIL_USER_NAME is not None:
             self.email_notification = EmailNotification(
@@ -139,6 +139,5 @@ class BitcoinDCA:
 
 
 if __name__ == "__main__":
-    encryption_pass = os.environ["ENCRYPTION_PASS"]
-    bitcoin_dca = BitcoinDCA(encryption_pass)
+    bitcoin_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"])
     bitcoin_dca.startDCA()
