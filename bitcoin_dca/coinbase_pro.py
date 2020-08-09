@@ -22,9 +22,9 @@ class CoinbasePro:
 
     def refresh(self):
         self.accounts = self.auth_client.get_accounts()
-        time.sleep(1)
+        time.sleep(5)
         self.coinbase_accounts = self.auth_client.get_coinbase_accounts()
-        time.sleep(1)
+        time.sleep(5)
 
     def getAccount(self, currency):
         try:
@@ -115,7 +115,7 @@ class CoinbasePro:
         )
         try:
             while not order_result["settled"]:
-                time.sleep(1)
+                time.sleep(5)
                 order_result = self.auth_client.get_order(order_result["id"])
             self.printOrderResult(order_result)
             self.db_manager.saveBuyTransaction(
