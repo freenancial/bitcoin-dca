@@ -5,6 +5,9 @@ DCA_USD_AMOUNT = 5
 # How frequent you want to buy Bitcoin in seconds.
 DCA_FREQUENCY = 4320
 
+# The minimum usdc balance to be kept on Coinbase Pro
+MIN_USDC_BALANCE = 0
+
 # If set to True, bitcoin-dca will auto withdraw Bitcoin once it has bought Bitcoin
 # WITHDRAW_EVERY_X_BUY times.
 AUTO_WITHDRAWL = False

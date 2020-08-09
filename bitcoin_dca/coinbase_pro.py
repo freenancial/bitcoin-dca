@@ -7,6 +7,7 @@ import time
 import _path_init  # pylint: disable=unused-import
 import db_manager
 from coinbasepro_python import cbpro
+from config import MIN_USDC_BALANCE
 from logger import Logger
 
 Account = collections.namedtuple("Account", "id balance")
@@ -21,9 +22,9 @@ class CoinbasePro:
 
     def refresh(self):
         self.accounts = self.auth_client.get_accounts()
-        time.sleep(1)
+        time.sleep(5)
         self.coinbase_accounts = self.auth_client.get_coinbase_accounts()
-        time.sleep(1)
+        time.sleep(5)
 
     def getAccount(self, currency):
         try:
@@ -92,8 +93,8 @@ class CoinbasePro:
         self.refresh()
 
         amount = math.ceil(amount * 100) / 100
-        if self.usdc_balance() < amount:
-            self.depositUSDCFromCoinbase(amount - self.usdc_balance())
+        if self.usdc_balance() < amount + MIN_USDC_BALANCE:
+            self.depositUSDCFromCoinbase(amount + MIN_USDC_BALANCE - self.usdc_balance())
 
         Logger.info(f"Converting ${amount} USDC to USD ...")
         self.auth_client.convert_stablecoin(amount, "USDC", "USD")
@@ -114,7 +115,7 @@ class CoinbasePro:
         )
         try:
             while not order_result["settled"]:
-                time.sleep(1)
+                time.sleep(5)
                 order_result = self.auth_client.get_order(order_result["id"])
             self.printOrderResult(order_result)
             self.db_manager.saveBuyTransaction(
