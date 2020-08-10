@@ -76,16 +76,11 @@ class CoinbasePro:
 
     def showBalance(self):
         self.refresh()
-        Logger.info(
-            "\nCoinbase balance: ${:.2f}".format(self.coinbase_usdc_account.balance)
-        )
-        Logger.info(
-            "USDC balance: ${:.2f}".format(math.floor(self.usdc_balance * 100) / 100)
-        )
-        Logger.info(
-            "USD balance: ${:.2f}".format(math.floor(self.usd_balance * 100) / 100)
-        )
-        Logger.info("BTC balance: ₿{}\n".format(self.btc_account.balance))
+        Logger.info("Current Balance:")
+        Logger.info("  Coinbase: ${:.2f}".format(self.coinbase_usdc_account.balance))
+        Logger.info("  USDC: ${:.2f}".format(math.floor(self.usdc_balance * 100) / 100))
+        Logger.info("  USD: ${:.2f}".format(math.floor(self.usd_balance * 100) / 100))
+        Logger.info("  BTC: ₿{}\n".format(self.btc_account.balance))
 
     @property
     def unwithdrawn_buys_count(self):
