@@ -50,34 +50,45 @@ class CoinbasePro:
             Logger.error(self.coinbase_accounts)
             raise e
 
-    def coinbaseUSDCAccount(self):
+    @property
+    def coinbase_usdc_account(self):
         return self.convertRawAccount(self.getCoinbaseAccount("USDC"))
 
-    def usdAccount(self):
+    @property
+    def usd_account(self):
         return self.convertRawAccount(self.getAccount("USD"))
 
-    def usdcAccount(self):
+    @property
+    def usd_balance(self):
+        return self.usd_account.balance
+
+    @property
+    def usdc_account(self):
         return self.convertRawAccount(self.getAccount("USDC"))
 
-    def btcAccount(self):
+    @property
+    def usdc_balance(self):
+        return self.usdc_account.balance
+
+    @property
+    def btc_account(self):
         return self.convertRawAccount(self.getAccount("BTC"))
 
     def showBalance(self):
         self.refresh()
-        Logger.info("")
         Logger.info(
-            "Coinbase USDC balance: ${:.2f}".format(self.coinbaseUSDCAccount().balance)
+            "\nCoinbase balance: ${:.2f}".format(self.coinbase_usdc_account.balance)
         )
         Logger.info(
-            "USDC balance: ${:.2f}".format(math.floor(self.usdc_balance() * 100) / 100)
+            "USDC balance: ${:.2f}".format(math.floor(self.usdc_balance * 100) / 100)
         )
         Logger.info(
-            "USD balance: ${:.2f}".format(math.floor(self.usd_balance() * 100) / 100)
+            "USD balance: ${:.2f}".format(math.floor(self.usd_balance * 100) / 100)
         )
-        Logger.info("BTC balance: ₿{}".format(self.btcAccount().balance))
-        Logger.info("")
+        Logger.info("BTC balance: ₿{}\n".format(self.btc_account.balance))
 
-    def getUnwithdrawnBuysCount(self):
+    @property
+    def unwithdrawn_buys_count(self):
         return self.db_manager.getUnwithdrawnBuysCount()
 
     def depositUSDCFromCoinbase(self, amount):
@@ -86,31 +97,36 @@ class CoinbasePro:
         amount = math.ceil(amount * 100) / 100
         Logger.info(f"Depositing ${amount} USDC from Coinbase ...")
         result = self.auth_client.coinbase_deposit(
-            amount, "USDC", self.coinbaseUSDCAccount().id
+            amount, "USDC", self.coinbase_usdc_account.id
         )
-        Logger.info(f"  {result}")
+        Logger.info(f"  {result}\n")
         time.sleep(5)
 
     def convertUSDCToUSD(self, amount):
         self.refresh()
 
         amount = math.ceil(amount * 100) / 100
-        if self.usdc_balance() < amount + self.config.minUsdcBalance:
+        if self.usdc_balance < amount + self.config.min_usdc_balance:
             self.depositUSDCFromCoinbase(
-                amount + self.config.minUsdcBalance - self.usdc_balance()
+                amount + self.config.min_usdc_balance - self.usdc_balance
             )
 
         Logger.info(f"Converting ${amount} USDC to USD ...")
         result = self.auth_client.convert_stablecoin(amount, "USDC", "USD")
-        Logger.info(f"  {result}")
+        Logger.info(f"  {result}\n")
         time.sleep(5)
 
     def buyBitcoin(self, usd_amount):
         self.refresh()
 
         usd_amount = math.ceil(usd_amount * 100) / 100
-        if self.usd_balance() < usd_amount:
-            self.convertUSDCToUSD(usd_amount - self.usd_balance())
+        if self.usd_balance < usd_amount:
+            self.convertUSDCToUSD(usd_amount - self.usd_balance)
+            self.refresh()
+            if self.usd_balance < usd_amount:
+                raise Exception(
+                    f"Insufficient fund, has ${self.usd_balance}, needs ${usd_amount}"
+                )
 
         Logger.info(f"Buying ${usd_amount} Bitcoin ...")
         product_id = "BTC-USD"
@@ -131,21 +147,14 @@ class CoinbasePro:
             Logger.error(f"Unable to fetch or parse order_result: {order_result}")
         time.sleep(5)
 
-    def usdc_balance(self):
-        return self.usdcAccount().balance
-
-    def usd_balance(self):
-        return self.usdAccount().balance
-
     def withdrawBitcoin(self, amount, address):
         Logger.info(f"Withdrawing ₿{amount} Bitcoin to address {address} ...")
-        withdraw_result = self.auth_client.crypto_withdraw(amount, "BTC", address)
-        Logger.info(withdraw_result)
+        result = self.auth_client.crypto_withdraw(amount, "BTC", address)
+        Logger.info(f"  {result}\n")
         self.db_manager.updateWithdrawAddressForBuyOrders(address)
-        Logger.info("")
 
     def getBitcoinWorth(self):
-        return self.btcAccount().balance * self.getBitcoinPrice()
+        return self.btc_account.balance * self.getBitcoinPrice()
 
     def getBitcoinPrice(self):
         return float(
@@ -154,11 +163,13 @@ class CoinbasePro:
 
     @staticmethod
     def printOrderResult(order_result):
-        Logger.info(f"  Cost: \t{ round( float(order_result['specified_funds']), 2 )}")
+        cost = round(float(order_result["specified_funds"]), 2)
+        Logger.info(f"  Cost: \t{ cost }")
         Logger.info(f"  Size: \t{ order_result['filled_size'] }")
-        Logger.info(
-            f"  Price: \t{ round( float(order_result['funds']) / float(order_result['filled_size']), 2 ) }"
+        price = round(
+            float(order_result["funds"]) / float(order_result["filled_size"]), 2
         )
+        Logger.info(f"  Price: \t{ price }")
         Logger.info(f"  Fee: \t{ order_result['fill_fees'] }")
         Logger.info(f"  Date: \t{ order_result['done_at'] }")
 

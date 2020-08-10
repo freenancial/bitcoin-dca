@@ -14,33 +14,33 @@ class Config:
         self.config.read(self.config_file_path)
 
     @property
-    def dcaUsdAmount(self):
+    def dca_usd_amount(self):
         return self.config["BASIC"].getint("DCA_USD_AMOUNT")
 
     @property
-    def dcaFrequency(self):
+    def dca_frequency(self):
         return self.config["BASIC"].getint("DCA_FREQUENCY")
 
     @property
-    def minUsdcBalance(self):
+    def min_usdc_balance(self):
         return self.config["BASIC"].getfloat("MIN_USDC_BALANCE")
 
     @property
-    def withdrawEveryXBuy(self):
+    def withdraw_every_x_buy(self):
         return self.config["AUTO_WITHDRAWL"].getint("WITHDRAW_EVERY_X_BUY")
 
     @property
-    def withdrawMasterPublicKey(self):
+    def withdraw_master_public_key(self):
         return self.config["AUTO_WITHDRAWL"].get("MASTER_PUBLIC_KEY")
 
     @property
-    def withdrawBeginningAddress(self):
+    def withdraw_beginning_address(self):
         return self.config["AUTO_WITHDRAWL"].get("BEGINNING_ADDRESS")
 
     @property
-    def notificationGmailUserName(self):
+    def notification_gmail_user_name(self):
         return self.config["NOTIFICATION"].get("GMAIL_USER_NAME")
 
     @property
-    def notificationReceiver(self):
+    def notification_receiver(self):
         return self.config["NOTIFICATION"].get("EMAIL_NOTICE_RECEIVER")

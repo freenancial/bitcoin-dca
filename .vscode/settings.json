@@ -3,13 +3,10 @@
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
     "editor.rulers": [
-        100
+        88
     ],
 
     "python.pythonPath": "venv/bin/python",
-    "python.formatting.autopep8Args": [
-        "--max-line-length=100"
-    ],
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
     "python.formatting.provider": "black",
