@@ -132,3 +132,4 @@ bitcoin_dca.db-journal
 nohup.out
 bitcoin_dca.secrets
 log
+config.ini

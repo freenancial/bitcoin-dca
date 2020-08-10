@@ -3,23 +3,14 @@
 """The module is the entry point of bitcoin-dca.
 """
 import datetime
+import getpass
 import os
 import time
-import getpass
 
 import ahr999_index
 from address_selector import AddressSelector
 from coinbase_pro import CoinbasePro
-from config import (
-    AUTO_WITHDRAWL,
-    BEGINNING_ADDRESS,
-    DCA_FREQUENCY,
-    DCA_USD_AMOUNT,
-    EMAIL_NOTICE_RECEIVER,
-    GMAIL_USER_NAME,
-    MASTER_PUBLIC_KEY,
-    WITHDRAW_EVERY_X_BUY,
-)
+from config import Config
 from db_manager import DBManager
 from email_notification import EmailNotification
 from logger import Logger
@@ -29,15 +20,20 @@ from secret import Secret
 class BitcoinDCA:
     def __init__(self, encryption_pass=None):
         if not encryption_pass:
-            encryption_pass = getpass.getpass('Encryption password: ')
+            encryption_pass = getpass.getpass("Encryption password: ")
         self.secrets = Secret.decryptAllSecrets(encryption_pass)
-        if GMAIL_USER_NAME is not None:
+        self.config = Config("config.ini")
+
+        if self.config.notificationGmailUserName:
             self.email_notification = EmailNotification(
-                GMAIL_USER_NAME, self.secrets["gmail_password"], EMAIL_NOTICE_RECEIVER
+                self.config.notificationGmailUserName,
+                self.secrets["gmail_password"],
+                self.config.notificationReceiver,
             )
-        if AUTO_WITHDRAWL:
+        if self.config.withdrawEveryXBuy:
             self.address_selector = AddressSelector(
-                MASTER_PUBLIC_KEY, BEGINNING_ADDRESS
+                self.config.withdrawMasterPublicKey,
+                self.config.withdrawBeginningAddress,
             )
         self.db_manager = DBManager()
         self.next_buy_datetime = self.calcFirstBuyTime()
@@ -59,7 +55,7 @@ class BitcoinDCA:
         last_buy_datetime = DBManager.convertOrderDatetime(last_buy_order_datetime)
         return max(
             datetime.datetime.now(),
-            last_buy_datetime + datetime.timedelta(0, DCA_FREQUENCY),
+            last_buy_datetime + datetime.timedelta(0, self.config.dcaFrequency),
         )
 
     def startDCA(self):
@@ -81,7 +77,9 @@ class BitcoinDCA:
                 if ahr999_index_value > 5.0:
                     Logger.info("ahr999_index is over 5.0")
                     Logger.info("Skip this round of Bitcoin purchase")
-                    self.next_buy_datetime += datetime.timedelta(0, DCA_FREQUENCY)
+                    self.next_buy_datetime += datetime.timedelta(
+                        0, self.config.dcaFrequency
+                    )
                     continue
             except Exception as error:  # pylint: disable=broad-except
                 Logger.critical(f"Getting ahr999_index failed: {error}")
@@ -90,7 +88,7 @@ class BitcoinDCA:
             self.coinbase_pro = self.newCoinbaseProClient()
             try:
                 self.coinbase_pro.showBalance()
-                self.coinbase_pro.buyBitcoin(DCA_USD_AMOUNT)
+                self.coinbase_pro.buyBitcoin(self.config.dcaUsdAmount)
             except Exception as error:  # pylint: disable=broad-except
                 Logger.error(f"Buy Bitcoin failed: {str(error)}")
                 Logger.error("Waiting for 60 seconds to retry ...")
@@ -106,12 +104,13 @@ class BitcoinDCA:
             except Exception as error:  # pylint: disable=broad-except
                 Logger.error(f"Withdraw Bitcoin failed: {str(error)}")
 
-            self.next_buy_datetime += datetime.timedelta(0, DCA_FREQUENCY)
+            self.next_buy_datetime += datetime.timedelta(0, self.config.dcaFrequency)
 
     def timeToWithdraw(self):
         return (
             self.address_selector is not None
-            and self.coinbase_pro.getUnwithdrawnBuysCount() >= WITHDRAW_EVERY_X_BUY
+            and self.coinbase_pro.getUnwithdrawnBuysCount()
+            >= self.config.withdrawEveryXBuy
         )
 
     def sendEmailNotification(self):
@@ -134,7 +133,7 @@ class BitcoinDCA:
         # Wait for next buy time
         Logger.info(
             f"Waiting until {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
-            f"to buy ${DCA_USD_AMOUNT} Bitcoin..."
+            f"to buy ${self.config.dcaUsdAmount} Bitcoin..."
         )
         Logger.info("")
         while datetime.datetime.now() < self.next_buy_datetime:
