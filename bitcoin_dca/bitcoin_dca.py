@@ -5,6 +5,7 @@
 import datetime
 import os
 import time
+import getpass
 
 import ahr999_index
 from address_selector import AddressSelector
@@ -26,8 +27,9 @@ from secret import Secret
 
 
 class BitcoinDCA:
-    def __init__(self):
-        encryption_pass = os.environ["ENCRYPTION_PASS"]
+    def __init__(self, encryption_pass=None):
+        if not encryption_pass:
+            encryption_pass = getpass.getpass('Encryption password: ')
         self.secrets = Secret.decryptAllSecrets(encryption_pass)
         if GMAIL_USER_NAME is not None:
             self.email_notification = EmailNotification(
@@ -140,5 +142,5 @@ class BitcoinDCA:
 
 
 if __name__ == "__main__":
-    bitcoin_dca = BitcoinDCA()
+    bitcoin_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"])
     bitcoin_dca.startDCA()
