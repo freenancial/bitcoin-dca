@@ -1,28 +1,46 @@
 """This module defines all the configs for bitcoin_dca.
 """
-# How many dollar of Bitcoin you want to buy each time.
-DCA_USD_AMOUNT = 5
-# How frequent you want to buy Bitcoin in seconds.
-DCA_FREQUENCY = 4320
 
-# The minimum usdc balance to be kept on Coinbase Pro
-MIN_USDC_BALANCE = 0
+import configparser
 
-# If set to True, bitcoin-dca will auto withdraw Bitcoin once it has bought Bitcoin
-# WITHDRAW_EVERY_X_BUY times.
-AUTO_WITHDRAWL = False
-# Auto withdraw BTC when bitcoin-dca has bought Bitcoin WITHDRAW_EVERY_X_BUY times.
-WITHDRAW_EVERY_X_BUY = 20
-# The master public key to derive BTC addresess that utilized in auto withdraw.
-# Only addresses with empty balance wil be used, and each address will be used
-# only once.
-MASTER_PUBLIC_KEY = "zpub..."
-# The beginning address that BTC auto withdraw to. If set to None, the first address
-# derived from MASTER_PUBLIC_KEY will be used as the BEGINNING_ADDRESS.
-BEGINNING_ADDRESS = None
 
-# If GMAIL_USER_NAME is not None, bitcoin-dca will send out daily summary email
-# from GMAIL_USER_NAME to EMAIL_NOTICE_RECEIVER.
-GMAIL_USER_NAME = None
-# The receiver of daily summary email.
-EMAIL_NOTICE_RECEIVER = "xxx@xxx.com"
+class Config:
+    def __init__(self, config_file_path):
+        self.config_file_path = config_file_path
+        self.config = configparser.ConfigParser()
+        self.config.read(config_file_path)
+
+    def reload(self):
+        self.config.read(self.config_file_path)
+
+    @property
+    def dcaUsdAmount(self):
+        return self.config["BASIC"].getint("DCA_USD_AMOUNT")
+
+    @property
+    def dcaFrequency(self):
+        return self.config["BASIC"].getint("DCA_FREQUENCY")
+
+    @property
+    def minUsdcBalance(self):
+        return self.config["BASIC"].getfloat("MIN_USDC_BALANCE")
+
+    @property
+    def withdrawEveryXBuy(self):
+        return self.config["AUTO_WITHDRAWL"].getint("WITHDRAW_EVERY_X_BUY")
+
+    @property
+    def withdrawMasterPublicKey(self):
+        return self.config["AUTO_WITHDRAWL"].get("MASTER_PUBLIC_KEY")
+
+    @property
+    def withdrawBeginningAddress(self):
+        return self.config["AUTO_WITHDRAWL"].get("BEGINNING_ADDRESS")
+
+    @property
+    def notificationGmailUserName(self):
+        return self.config["NOTIFICATION"].get("GMAIL_USER_NAME")
+
+    @property
+    def notificationReceiver(self):
+        return self.config["NOTIFICATION"].get("EMAIL_NOTICE_RECEIVER")

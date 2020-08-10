@@ -1,9 +1,10 @@
 .PHONY: init setup start_dca stop_dca lint
 
 init:
-	./scripts/setup.sh
+	./scripts/init.sh
 
 setup: init
+	cp config_template.ini config.ini
 	. venv/bin/activate && ./bitcoin_dca/setup.py
 
 start_dca:

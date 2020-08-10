@@ -7,18 +7,18 @@ import time
 import _path_init  # pylint: disable=unused-import
 import db_manager
 from coinbasepro_python import cbpro
-from config import MIN_USDC_BALANCE
 from logger import Logger
 
 Account = collections.namedtuple("Account", "id balance")
 
 
 class CoinbasePro:
-    def __init__(self, api_key, api_secret, passphrase):
+    def __init__(self, api_key, api_secret, passphrase, config):
         self.auth_client = cbpro.AuthenticatedClient(api_key, api_secret, passphrase)
         self.db_manager = db_manager.DBManager()
         self.accounts = []
         self.coinbase_accounts = []
+        self.config = config
 
     def refresh(self):
         self.accounts = self.auth_client.get_accounts()
@@ -85,7 +85,9 @@ class CoinbasePro:
 
         amount = math.ceil(amount * 100) / 100
         Logger.info(f"Depositing ${amount} USDC from Coinbase ...")
-        result = self.auth_client.coinbase_deposit(amount, "USDC", self.coinbaseUSDCAccount().id)
+        result = self.auth_client.coinbase_deposit(
+            amount, "USDC", self.coinbaseUSDCAccount().id
+        )
         Logger.info(f"  {result}")
         time.sleep(5)
 
@@ -93,8 +95,10 @@ class CoinbasePro:
         self.refresh()
 
         amount = math.ceil(amount * 100) / 100
-        if self.usdc_balance() < amount + MIN_USDC_BALANCE:
-            self.depositUSDCFromCoinbase(amount + MIN_USDC_BALANCE - self.usdc_balance())
+        if self.usdc_balance() < amount + self.config.minUsdcBalance:
+            self.depositUSDCFromCoinbase(
+                amount + self.config.minUsdcBalance - self.usdc_balance()
+            )
 
         Logger.info(f"Converting ${amount} USDC to USD ...")
         result = self.auth_client.convert_stablecoin(amount, "USDC", "USD")
