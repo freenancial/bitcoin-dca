@@ -44,6 +44,7 @@ class BitcoinDCA:
             self.secrets["api_key"],
             self.secrets["api_secret"],
             self.secrets["passphrase"],
+            self.config,
         )
 
     def calcFirstBuyTime(self):
