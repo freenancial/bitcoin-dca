@@ -60,15 +60,15 @@ class BitcoinDCA:
         )
 
     def startDCA(self):
-        Logger.info("--------------------------------------------------")
-        Logger.info("--------------------------------------------------")
+        Logger.info("-------------------")
+        Logger.info("-------------------")
         Logger.info("Bitcoin DCA started\n")
         self.coinbase_pro.showBalance()
 
         while True:
             self.waitForNextBuyTime()
 
-            Logger.info("--------------------------------------------------")
+            Logger.info("-------------------")
 
             # Skip buying bitcoin if ahr999 index is above 5.0
             try:
