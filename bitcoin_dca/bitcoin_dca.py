@@ -73,7 +73,7 @@ class BitcoinDCA:
             # Skip buying bitcoin if ahr999 index is above 5.0
             try:
                 ahr999_index_value = ahr999_index.getCurrentIndexValue()
-                Logger.info(f"ahr999_index: {ahr999_index_value}")
+                Logger.info(f"ahr999_index: {ahr999_index_value}\n")
                 if ahr999_index_value > 5.0:
                     Logger.info("ahr999_index is over 5.0")
                     Logger.info("Skip this round of Bitcoin purchase")
