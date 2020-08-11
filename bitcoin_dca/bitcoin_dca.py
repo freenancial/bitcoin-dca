@@ -121,7 +121,7 @@ class BitcoinDCA:
 
     def withdrawAllBitcoin(self):
         self.coinbase_pro.withdrawBitcoin(
-            self.coinbase_pro.btcAccount().balance,
+            self.coinbase_pro.btc_account.balance,
             self.address_selector.getWithdrawAddress(),
         )
         self.address_selector.incrementAddressIndex()
