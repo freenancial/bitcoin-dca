@@ -138,8 +138,8 @@ class CoinbasePro:
                 cost=round(float(order_result["specified_funds"]), 2),
                 size=order_result["filled_size"],
             )
-        except Exception:  # pylint: disable=broad-except
-            Logger.error(f"Unable to fetch or parse order_result: {order_result}")
+        except Exception as error:  # pylint: disable=broad-except
+            Logger.error(f"Buy Bitcoin failed, error: {error}; order_result: {order_result}")
         time.sleep(5)
 
     def withdrawBitcoin(self, amount, address):
@@ -166,7 +166,7 @@ class CoinbasePro:
         )
         Logger.info(f"  Price: \t{ price }")
         Logger.info(f"  Fee: \t{ order_result['fill_fees'] }")
-        Logger.info(f"  Date: \t{ order_result['done_at'] }")
+        Logger.info(f"  Date: \t{ order_result['done_at'] }\n")
 
     @staticmethod
     def convertRawAccount(raw_account):
