@@ -24,16 +24,16 @@ class BitcoinDCA:
         self.secrets = Secret.decryptAllSecrets(encryption_pass)
         self.config = Config("config.ini")
 
-        if self.config.notificationGmailUserName:
+        if self.config.notification_gmail_user_name:
             self.email_notification = EmailNotification(
-                self.config.notificationGmailUserName,
+                self.config.notification_gmail_user_name,
                 self.secrets["gmail_password"],
-                self.config.notificationReceiver,
+                self.config.notification_receiver,
             )
-        if self.config.withdrawEveryXBuy:
+        if self.config.withdraw_every_x_buy:
             self.address_selector = AddressSelector(
-                self.config.withdrawMasterPublicKey,
-                self.config.withdrawBeginningAddress,
+                self.config.withdraw_master_public_key,
+                self.config.withdraw_beginning_address,
             )
         self.db_manager = DBManager()
         self.next_buy_datetime = self.calcFirstBuyTime()
@@ -56,30 +56,29 @@ class BitcoinDCA:
         last_buy_datetime = DBManager.convertOrderDatetime(last_buy_order_datetime)
         return max(
             datetime.datetime.now(),
-            last_buy_datetime + datetime.timedelta(0, self.config.dcaFrequency),
+            last_buy_datetime + datetime.timedelta(0, self.config.dca_frequency),
         )
 
     def startDCA(self):
-        Logger.info("--------------------------------------------------")
-        Logger.info("--------------------------------------------------")
-        Logger.info("Bitcoin DCA started")
-        Logger.info("")
+        Logger.info("----------------------")
+        Logger.info("----------------------")
+        Logger.info("Bitcoin DCA started\n")
         self.coinbase_pro.showBalance()
 
         while True:
             self.waitForNextBuyTime()
 
-            Logger.info("--------------------------------------------------")
+            Logger.info("----------------------")
 
             # Skip buying bitcoin if ahr999 index is above 5.0
             try:
                 ahr999_index_value = ahr999_index.getCurrentIndexValue()
-                Logger.info(f"ahr999_index: {ahr999_index_value}")
+                Logger.info(f"ahr999_index: {ahr999_index_value}\n")
                 if ahr999_index_value > 5.0:
                     Logger.info("ahr999_index is over 5.0")
                     Logger.info("Skip this round of Bitcoin purchase")
                     self.next_buy_datetime += datetime.timedelta(
-                        0, self.config.dcaFrequency
+                        0, self.config.dca_frequency
                     )
                     continue
             except Exception as error:  # pylint: disable=broad-except
@@ -89,7 +88,7 @@ class BitcoinDCA:
             self.coinbase_pro = self.newCoinbaseProClient()
             try:
                 self.coinbase_pro.showBalance()
-                self.coinbase_pro.buyBitcoin(self.config.dcaUsdAmount)
+                self.coinbase_pro.buyBitcoin(self.config.dca_usd_amount)
             except Exception as error:  # pylint: disable=broad-except
                 Logger.error(f"Buy Bitcoin failed: {str(error)}")
                 Logger.error("Waiting for 60 seconds to retry ...")
@@ -105,13 +104,13 @@ class BitcoinDCA:
             except Exception as error:  # pylint: disable=broad-except
                 Logger.error(f"Withdraw Bitcoin failed: {str(error)}")
 
-            self.next_buy_datetime += datetime.timedelta(0, self.config.dcaFrequency)
+            self.next_buy_datetime += datetime.timedelta(0, self.config.dca_frequency)
 
     def timeToWithdraw(self):
         return (
             self.address_selector is not None
-            and self.coinbase_pro.getUnwithdrawnBuysCount()
-            >= self.config.withdrawEveryXBuy
+            and self.coinbase_pro.unwithdrawn_buys_count
+            >= self.config.withdraw_every_x_buy
         )
 
     def sendEmailNotification(self):
@@ -122,7 +121,7 @@ class BitcoinDCA:
 
     def withdrawAllBitcoin(self):
         self.coinbase_pro.withdrawBitcoin(
-            self.coinbase_pro.btcAccount().balance,
+            self.coinbase_pro.btc_account.balance,
             self.address_selector.getWithdrawAddress(),
         )
         self.address_selector.incrementAddressIndex()
@@ -134,9 +133,8 @@ class BitcoinDCA:
         # Wait for next buy time
         Logger.info(
             f"Waiting until {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
-            f"to buy ${self.config.dcaUsdAmount} Bitcoin..."
+            f"to buy ${self.config.dca_usd_amount} Bitcoin...\n"
         )
-        Logger.info("")
         while datetime.datetime.now() < self.next_buy_datetime:
             time.sleep(1)
 
