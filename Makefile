@@ -7,7 +7,7 @@ setup: init
 	cp config_template.ini config.ini
 	. venv/bin/activate && ./bitcoin_dca/setup.py
 
-start_dca:
+start_dca: stop_dca
 	./scripts/start_dca.sh
 
 stop_dca:
