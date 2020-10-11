@@ -21,10 +21,10 @@ class CoinbasePro:
         self.config = config
 
     def refresh(self):
-        self.accounts = self.auth_client.get_accounts()
-        time.sleep(5)
-        self.coinbase_accounts = self.auth_client.get_coinbase_accounts()
-        time.sleep(5)
+        while len(self.accounts) <= 1:
+            self.accounts = self.auth_client.get_accounts()
+        while len(self.coinbase_accounts) <= 1
+            self.coinbase_accounts = self.auth_client.get_coinbase_accounts()
 
     def getAccount(self, currency):
         try:
