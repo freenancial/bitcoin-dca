@@ -21,6 +21,8 @@ class CoinbasePro:
         self.config = config
 
     def refresh(self):
+        self.accounts = []
+        self.coinbase_accounts = []
         while len(self.accounts) <= 1:
             self.accounts = self.auth_client.get_accounts()
         while len(self.coinbase_accounts) <= 1:
