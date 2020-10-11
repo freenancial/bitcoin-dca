@@ -30,6 +30,9 @@ class BitcoinDCA:
                 self.secrets["gmail_password"],
                 self.config.notification_receiver,
             )
+        else:
+            self.email_notification = None
+
         if self.config.withdraw_every_x_buy:
             self.address_selector = AddressSelector(
                 self.config.withdraw_master_public_key,
