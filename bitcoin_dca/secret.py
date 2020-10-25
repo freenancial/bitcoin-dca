@@ -34,6 +34,11 @@ class Secret:
         return Fernet(encrypt_key).decrypt(encrypted_content.encode()).decode("utf-8")
 
     @staticmethod
+    def answeredYes(prompt_text):
+        answer = input(prompt_text)
+        return answer.lower()[:1] == 'y'
+
+    @staticmethod
     def encryptAllSecrets():
         while True:
             encryption_pass = getpass.getpass("Please create a password for secrets: ")
@@ -44,10 +49,28 @@ class Secret:
                 print()
                 break
 
-        api_key = getpass.getpass("Your Coinbase Pro API key: ")
-        api_secret = getpass.getpass("Your Coinbase Pro API secret: ")
-        passphrase = getpass.getpass("Your Coinbase Pro API passphrase: ")
-        gmail_password = getpass.getpass("Gmail user password: ")
+        # Init empty secrets
+        api_key = ''
+        api_secret = ''
+        passphrase = ''
+        gmail_password = ''
+        robinhood_user = ''
+        robinhood_password = ''
+        robinhood_totp = ''
+
+        if Secret.answeredYes("DCA with Coinbase Pro? (y/n): "):
+            api_key = getpass.getpass("Your Coinbase Pro API key: ")
+            api_secret = getpass.getpass("Your Coinbase Pro API secret: ")
+            passphrase = getpass.getpass("Your Coinbase Pro API passphrase: ")
+        
+        if Secret.answeredYes("DCA with Robinhood? (y/n): "):
+            robinhood_user = getpass.getpass("Your Robinhood username: ")
+            robinhood_password = getpass.getpass("Your Robinhood password: ")
+            robinhood_totp = getpass.getpass("Your Robinhood TOTP: ")
+
+        if Secret.answeredYes("Send out email notifications? (y/n): "):
+            gmail_password = getpass.getpass("Gmail user password: ")
+
         print()
 
         # Encrypt and save these secrets to `bitcoin_dca.secrets`
@@ -60,6 +83,9 @@ class Secret:
             f.write(Secret.encrypt(key, api_secret) + "\n")
             f.write(Secret.encrypt(key, passphrase) + "\n")
             f.write(Secret.encrypt(key, gmail_password) + "\n")
+            f.write(Secret.encrypt(key, robinhood_user) + "\n")
+            f.write(Secret.encrypt(key, robinhood_password) + "\n")
+            f.write(Secret.encrypt(key, robinhood_totp) + "\n")
             f.close()
 
     @staticmethod
@@ -74,11 +100,17 @@ class Secret:
                 api_secret = Secret.decrypt(key, f.readline())
                 passphrase = Secret.decrypt(key, f.readline())
                 gmail_password = Secret.decrypt(key, f.readline())
+                robinhood_user = Secret.decrypt(key, f.readline())
+                robinhood_password = Secret.decrypt(key, f.readline())
+                robinhood_totp = Secret.decrypt(key, f.readline())
                 return {
                     "api_key": api_key,
                     "api_secret": api_secret,
                     "passphrase": passphrase,
                     "gmail_password": gmail_password,
+                    "robinhood_user": robinhood_user,
+                    "robinhood_password": robinhood_password,
+                    "robinhood_totp": robinhood_totp
                 }
             except cryptography.fernet.InvalidToken:
                 Logger.critical("Invalid encryption_pass, unable to unlock secrets!")
