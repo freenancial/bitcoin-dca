@@ -30,7 +30,7 @@ class Config:
 
     @property
     def robinhood_dca_usd_amount(self):
-        return self.config["ROBINHOOD"].getint("DCA_USD_AMOUNT")
+        return self.config["ROBINHOOD"].getfloat("DCA_USD_AMOUNT")
 
     @property
     def withdraw_every_x_buy(self):
