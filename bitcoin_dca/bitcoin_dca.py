@@ -168,7 +168,8 @@ class BitcoinDCA:
         # Wait for next buy time
         Logger.info(
             f"Waiting until {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
-            f"to buy ${self.config.dca_usd_amount} Bitcoin...\n"
+            f"to buy ${self.config.dca_usd_amount} Bitcoin on Coinbase "
+            f"and ${self.config.robinhood_dca_usd_amount} Bitcoin on Robinhood...\n"
         )
         while datetime.datetime.now() < self.next_buy_datetime:
             time.sleep(1)
