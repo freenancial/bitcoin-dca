@@ -14,16 +14,23 @@ class Config:
         self.config.read(self.config_file_path)
 
     @property
-    def dca_usd_amount(self):
-        return self.config["BASIC"].getint("DCA_USD_AMOUNT")
+    def dca_frequency(self):
+        dca_times_per_day = self.config["BASIC"].getfloat("DCA_TIMES_PER_DAY")
+        seconds_per_day = 24 * 3600
+        # Convert dca times per day to dca frequency in seconds
+        return int(seconds_per_day / dca_times_per_day)
 
     @property
-    def dca_frequency(self):
-        return self.config["BASIC"].getint("DCA_FREQUENCY")
+    def dca_usd_amount(self):
+        return self.config["COINBASE_PRO"].getint("DCA_USD_AMOUNT")
 
     @property
     def min_usdc_balance(self):
-        return self.config["BASIC"].getfloat("MIN_USDC_BALANCE")
+        return self.config["COINBASE_PRO"].getfloat("MIN_USDC_BALANCE")
+
+    @property
+    def robinhood_dca_usd_amount(self):
+        return self.config["ROBINHOOD"].getint("DCA_USD_AMOUNT")
 
     @property
     def withdraw_every_x_buy(self):

@@ -7,6 +7,9 @@ import getpass
 import os
 import time
 
+import robin_stocks
+import pyotp
+
 import ahr999_index
 from address_selector import AddressSelector
 from coinbase_pro import CoinbasePro
@@ -62,32 +65,28 @@ class BitcoinDCA:
             last_buy_datetime + datetime.timedelta(0, self.config.dca_frequency),
         )
 
-    def startDCA(self):
-        Logger.info("----------------------")
-        Logger.info("----------------------")
-        Logger.info("Bitcoin DCA started\n")
-        self.coinbase_pro.showBalance()
+    def checkBuyingCriteria(self):
+        # Skip buying bitcoin if ahr999 index is above 5.0
+        try:
+            ahr999_index_value = ahr999_index.getCurrentIndexValue()
+            Logger.info(f"ahr999_index: {ahr999_index_value}\n")
+            if ahr999_index_value > 5.0:
+                Logger.info("ahr999_index is over 5.0")
+                Logger.info("Skip this round of Bitcoin purchase")
+                self.next_buy_datetime += datetime.timedelta(
+                    0, self.config.dca_frequency
+                )
+                return False
+        except Exception as error:  # pylint: disable=broad-except
+            Logger.critical(f"Getting ahr999_index failed: {error}")
+        return True
+
+    def buyBitcoinOnCoinbase(self):
+        if self.config.dca_usd_amount <= 0:
+            Logger.info("Skip Coinbase DCA because the dca amount is no larger than 0")
+            return
 
         while True:
-            self.waitForNextBuyTime()
-
-            Logger.info("----------------------")
-
-            # Skip buying bitcoin if ahr999 index is above 5.0
-            try:
-                ahr999_index_value = ahr999_index.getCurrentIndexValue()
-                Logger.info(f"ahr999_index: {ahr999_index_value}\n")
-                if ahr999_index_value > 5.0:
-                    Logger.info("ahr999_index is over 5.0")
-                    Logger.info("Skip this round of Bitcoin purchase")
-                    self.next_buy_datetime += datetime.timedelta(
-                        0, self.config.dca_frequency
-                    )
-                    continue
-            except Exception as error:  # pylint: disable=broad-except
-                Logger.critical(f"Getting ahr999_index failed: {error}")
-
-            # Buy Bitcoin
             self.coinbase_pro = self.newCoinbaseProClient()
             try:
                 self.coinbase_pro.showBalance()
@@ -106,7 +105,40 @@ class BitcoinDCA:
                     self.withdrawAllBitcoin()
             except Exception as error:  # pylint: disable=broad-except
                 Logger.error(f"Withdraw Bitcoin failed: {str(error)}")
+            break
 
+    def buyBitcoinOnRobinhood(self):
+        if self.config.robinhood_dca_usd_amount <= 0:
+            Logger.info("Skip Robinhood DCA because the dca amount is no larger than 0")
+            return
+        username = self.secrets["robinhood_user"]
+        passwd = self.secrets["robinhood_password"]
+        totp = self.secrets["robinhood_totp"]
+        login = robin_stocks.login(username, passwd, mfa_code=pyotp.TOTP(totp).now())
+        Logger.info(f"{login['detail']}\n")
+
+        dca_amount = self.config.robinhood_dca_usd_amount
+        buy_order = robin_stocks.order_buy_crypto_by_price("BTC", dca_amount)
+        Logger.info(f"{buy_order}\n")
+
+    def startDCA(self):
+        Logger.info("----------------------")
+        Logger.info("----------------------")
+        Logger.info("Bitcoin DCA started\n")
+        self.coinbase_pro.showBalance()
+
+        while True:
+            self.waitForNextBuyTime()
+
+            Logger.info("----------------------")
+            if not self.checkBuyingCriteria():
+                self.next_buy_datetime += datetime.timedelta(
+                    0, self.config.dca_frequency
+                )
+                continue
+
+            self.buyBitcoinOnCoinbase()
+            self.buyBitcoinOnRobinhood()
             self.next_buy_datetime += datetime.timedelta(0, self.config.dca_frequency)
 
     def timeToWithdraw(self):
