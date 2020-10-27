@@ -60,5 +60,5 @@ class Config:
         return self.config["NOTIFICATION"].get("EMAIL_NOTICE_RECEIVER")
 
 
-default_config = Config("Config.ini")
+default_config = Config("config.ini")
 
