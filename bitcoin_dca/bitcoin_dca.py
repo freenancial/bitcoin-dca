@@ -141,9 +141,6 @@ class BitcoinDCA:
             price=round(float(buy_order["price"]), 2),
             size=buy_order["quantity"],
         )
-        self.next_robinhood_buy_datetime += datetime.timedelta(
-            0, default_config.robinhood_dca_frequency
-        )
 
     def startCoinbaseDCA(self):
         print("----------------------")
