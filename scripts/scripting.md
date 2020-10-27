@@ -1,9 +1,6 @@
 # Preparing Shell Script
 ```
-cd bitcoin_dca
-source venv/bin/activate
-export PYTHONPATH="./bitcoin_dca"
-python
+cd bitcoin-dca && source venv/bin/activate && export PYTHONPATH="./bitcoin_dca" && python
 ```
 
 # Use BitcoinDCA wrapper class
@@ -11,7 +8,18 @@ python
 import getpass
 from bitcoin_dca.bitcoin_dca import BitcoinDCA
 passwd = getpass.getpass()
+
 bitcoin_dca = BitcoinDCA(passwd)
+```
+
+# Use Robinhood class
+```
+import robin_stocks
+import pyotp
+username = bitcoin_dca.secrets["robinhood_user"]
+passwd = bitcoin_dca.secrets["robinhood_password"]
+totp = bitcoin_dca.secrets["robinhood_totp"]
+login = robin_stocks.login(username, passwd, mfa_code=pyotp.TOTP(totp).now())
 ```
 
 # Use CoinbasePro class

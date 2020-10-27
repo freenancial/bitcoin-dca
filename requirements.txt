@@ -12,6 +12,7 @@ pymongo==3.7.2
 pyotp==2.4.1
 pytest==4.0.1
 python-dateutil==2.7.5
+pytz==2020.1
 requests==2.20.1
 robin-stocks==1.5.2
 sortedcontainers==2.1.0

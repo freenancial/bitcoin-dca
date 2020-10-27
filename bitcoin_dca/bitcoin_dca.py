@@ -4,6 +4,7 @@
 """
 import datetime
 import getpass
+import _thread
 import os
 import time
 
@@ -43,6 +44,7 @@ class BitcoinDCA:
             )
         self.db_manager = DBManager()
         self.next_buy_datetime = self.calcFirstBuyTime()
+        self.next_robinhood_buy_datetime = self.calcRobinhoodFirstBuyTime()
         self.coinbase_pro = self.newCoinbaseProClient()
 
     def newCoinbaseProClient(self):
@@ -63,6 +65,19 @@ class BitcoinDCA:
         return max(
             datetime.datetime.now(),
             last_buy_datetime + datetime.timedelta(0, self.config.dca_frequency),
+        )
+
+    def calcRobinhoodFirstBuyTime(self):
+        last_buy_order_datetime = self.db_manager.getRobinhoodLastBuyOrderDatetime()
+        # If we have no buy recored, we execute a buy order immediately.
+        if not last_buy_order_datetime:
+            return datetime.datetime.now()
+
+        last_buy_datetime = DBManager.convertOrderDatetime(last_buy_order_datetime)
+        return max(
+            datetime.datetime.now(),
+            last_buy_datetime
+            + datetime.timedelta(0, self.config.robinhood_dca_frequency),
         )
 
     def checkBuyingCriteria(self):
@@ -121,10 +136,19 @@ class BitcoinDCA:
         buy_order = robin_stocks.order_buy_crypto_by_price("BTC", dca_amount)
         Logger.info(f"{buy_order}\n")
 
-    def startDCA(self):
+        self.db_manager.saveRobinhoodBuyTransaction(
+            date=buy_order["created_at"],
+            price=round(float(buy_order["price"]), 2),
+            size=buy_order["quantity"],
+        )
+        self.next_robinhood_buy_datetime += datetime.timedelta(
+            0, self.config.robinhood_dca_frequency
+        )
+
+    def startCoinbaseDCA(self):
         Logger.info("----------------------")
         Logger.info("----------------------")
-        Logger.info("Bitcoin DCA started\n")
+        Logger.info("Coinbase DCA started\n")
         self.coinbase_pro.showBalance()
 
         while True:
@@ -138,8 +162,21 @@ class BitcoinDCA:
                 continue
 
             self.buyBitcoinOnCoinbase()
-            self.buyBitcoinOnRobinhood()
             self.next_buy_datetime += datetime.timedelta(0, self.config.dca_frequency)
+
+    def startRobinhoodDCA(self):
+        Logger.info("----------------------")
+        Logger.info("----------------------")
+        Logger.info("Robinhood DCA started\n")
+
+        while True:
+            self.waitForNextRobinhoodBuyTime()
+
+            Logger.info("----------------------")
+            self.buyBitcoinOnRobinhood()
+            self.next_robinhood_buy_datetime += datetime.timedelta(
+                0, self.config.robinhood_dca_frequency
+            )
 
     def timeToWithdraw(self):
         return (
@@ -168,13 +205,35 @@ class BitcoinDCA:
         # Wait for next buy time
         Logger.info(
             f"Waiting until {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
-            f"to buy ${self.config.dca_usd_amount} Bitcoin on Coinbase "
-            f"and ${self.config.robinhood_dca_usd_amount} Bitcoin on Robinhood...\n"
+            f"to buy ${self.config.dca_usd_amount} Bitcoin on Coinbase...\n "
         )
         while datetime.datetime.now() < self.next_buy_datetime:
             time.sleep(1)
 
+    def waitForNextRobinhoodBuyTime(self):
+        if datetime.datetime.now() > self.next_robinhood_buy_datetime:
+            return
+
+        # Wait for next buy time
+        Logger.info(
+            f"Waiting until {self.next_robinhood_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
+            f"to buy ${self.config.robinhood_dca_usd_amount} Bitcoin on Robinhood...\n"
+        )
+        while datetime.datetime.now() < self.next_robinhood_buy_datetime:
+            time.sleep(1)
+
+
+def coinbaseDCA():
+    coinbase_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"])
+    coinbase_dca.startCoinbaseDCA()
+
+
+def robinhoodDCA():
+    robinhood_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"])
+    robinhood_dca.startRobinhoodDCA()
+
 
 if __name__ == "__main__":
-    bitcoin_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"])
-    bitcoin_dca.startDCA()
+    _thread.start_new_thread(robinhoodDCA, ())
+    time.sleep(10)
+    _thread.start_new_thread(coinbaseDCA, ())
