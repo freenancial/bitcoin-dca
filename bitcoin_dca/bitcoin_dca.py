@@ -22,11 +22,11 @@ from secret import Secret
 
 
 class BitcoinDCA:
-    def __init__(self, encryption_pass=None):
+    def __init__(self, config, encryption_pass=None):
         if not encryption_pass:
             encryption_pass = getpass.getpass("Encryption password: ")
         self.secrets = Secret.decryptAllSecrets(encryption_pass)
-        self.config = Config("config.ini")
+        self.config = config
 
         if self.config.notification_gmail_user_name:
             self.email_notification = EmailNotification(
@@ -223,17 +223,18 @@ class BitcoinDCA:
             time.sleep(1)
 
 
-def coinbaseDCA():
-    coinbase_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"])
+def coinbaseDCA(config_value):
+    coinbase_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"], config_value)
     coinbase_dca.startCoinbaseDCA()
 
 
-def robinhoodDCA():
-    robinhood_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"])
+def robinhoodDCA(config_value):
+    robinhood_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"], config_value)
     robinhood_dca.startRobinhoodDCA()
 
 
 if __name__ == "__main__":
-    _thread.start_new_thread(robinhoodDCA, ())
+    config = Config("config.ini")
+    _thread.start_new_thread(robinhoodDCA, (config))
     time.sleep(5)
-    _thread.start_new_thread(coinbaseDCA, ())
+    _thread.start_new_thread(coinbaseDCA, (config))
