@@ -10,6 +10,8 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from logger import Logger
 
+secrets_dict = None
+
 
 class Secret:
     @staticmethod
@@ -36,7 +38,7 @@ class Secret:
     @staticmethod
     def answeredYes(prompt_text):
         answer = input(prompt_text)
-        return answer.lower()[:1] == 'y'
+        return answer.lower()[:1] == "y"
 
     @staticmethod
     def encryptAllSecrets():
@@ -50,19 +52,19 @@ class Secret:
                 break
 
         # Init empty secrets
-        api_key = ''
-        api_secret = ''
-        passphrase = ''
-        gmail_password = ''
-        robinhood_user = ''
-        robinhood_password = ''
-        robinhood_totp = ''
+        api_key = ""
+        api_secret = ""
+        passphrase = ""
+        gmail_password = ""
+        robinhood_user = ""
+        robinhood_password = ""
+        robinhood_totp = ""
 
         if Secret.answeredYes("DCA with Coinbase Pro? (y/n): "):
             api_key = getpass.getpass("Your Coinbase Pro API key: ")
             api_secret = getpass.getpass("Your Coinbase Pro API secret: ")
             passphrase = getpass.getpass("Your Coinbase Pro API passphrase: ")
-        
+
         if Secret.answeredYes("DCA with Robinhood? (y/n): "):
             robinhood_user = getpass.getpass("Your Robinhood username: ")
             robinhood_password = getpass.getpass("Your Robinhood password: ")
@@ -90,6 +92,9 @@ class Secret:
 
     @staticmethod
     def decryptAllSecrets(encryption_pass=None):
+        if secrets_dict:
+            return secrets_dict
+
         if not encryption_pass:
             encryption_pass = getpass.getpass("Password for unlocking secrets: ")
         with open("bitcoin_dca.secrets", "r") as f:
@@ -103,15 +108,16 @@ class Secret:
                 robinhood_user = Secret.decrypt(key, f.readline())
                 robinhood_password = Secret.decrypt(key, f.readline())
                 robinhood_totp = Secret.decrypt(key, f.readline())
-                return {
+                secrets_dict = {
                     "api_key": api_key,
                     "api_secret": api_secret,
                     "passphrase": passphrase,
                     "gmail_password": gmail_password,
                     "robinhood_user": robinhood_user,
                     "robinhood_password": robinhood_password,
-                    "robinhood_totp": robinhood_totp
+                    "robinhood_totp": robinhood_totp,
                 }
+                return secrets_dict
             except cryptography.fernet.InvalidToken:
                 Logger.critical("Invalid encryption_pass, unable to unlock secrets!")
                 raise

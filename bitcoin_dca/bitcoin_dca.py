@@ -235,4 +235,5 @@ def robinhoodDCA():
 
 if __name__ == "__main__":
     _thread.start_new_thread(robinhoodDCA, ())
+    time.sleep(5)
     _thread.start_new_thread(coinbaseDCA, ())
