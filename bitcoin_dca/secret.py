@@ -10,10 +10,10 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from logger import Logger
 
-secrets_dict = None
-
 
 class Secret:
+    secrets_dict = None
+
     @staticmethod
     def generateEncryptionKey(password_provided, salt_b64_str):
         password = password_provided.encode()
@@ -92,8 +92,8 @@ class Secret:
 
     @staticmethod
     def decryptAllSecrets(encryption_pass=None):
-        if secrets_dict:
-            return secrets_dict
+        if Secret.secrets_dict:
+            return Secret.secrets_dict
 
         if not encryption_pass:
             encryption_pass = getpass.getpass("Password for unlocking secrets: ")
@@ -108,7 +108,7 @@ class Secret:
                 robinhood_user = Secret.decrypt(key, f.readline())
                 robinhood_password = Secret.decrypt(key, f.readline())
                 robinhood_totp = Secret.decrypt(key, f.readline())
-                secrets_dict = {
+                Secret.secrets_dict = {
                     "api_key": api_key,
                     "api_secret": api_secret,
                     "passphrase": passphrase,
@@ -117,7 +117,7 @@ class Secret:
                     "robinhood_password": robinhood_password,
                     "robinhood_totp": robinhood_totp,
                 }
-                return secrets_dict
+                return Secret.secrets_dict
             except cryptography.fernet.InvalidToken:
                 Logger.critical("Invalid encryption_pass, unable to unlock secrets!")
                 raise
