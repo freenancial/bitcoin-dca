@@ -229,11 +229,6 @@ class BitcoinDCA:
             time.sleep(1)
 
 
-def coinbaseDCA():
-    coinbase_dca = BitcoinDCA(True, os.environ["ENCRYPTION_PASS"])
-    coinbase_dca.startCoinbaseDCA()
-
-
 def robinhoodDCA():
     robinhood_dca = BitcoinDCA(False, os.environ["ENCRYPTION_PASS"])
     robinhood_dca.startRobinhoodDCA()
@@ -242,4 +237,5 @@ def robinhoodDCA():
 if __name__ == "__main__":
     _thread.start_new_thread(robinhoodDCA, ())
     time.sleep(5)
-    _thread.start_new_thread(coinbaseDCA, ())
+    coinbase_dca = BitcoinDCA(True, os.environ["ENCRYPTION_PASS"])
+    coinbase_dca.startCoinbaseDCA()
