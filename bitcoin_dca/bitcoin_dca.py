@@ -22,13 +22,12 @@ from secret import Secret
 
 
 class BitcoinDCA:
-    def __init__(self, encryption_pass=None):
+    def __init__(self, is_coinbase, encryption_pass=None):
         if not encryption_pass:
             encryption_pass = getpass.getpass("Encryption password: ")
         self.secrets = Secret.decryptAllSecrets(encryption_pass)
-        # self.config = Config("config.ini")
 
-        if default_config.notification_gmail_user_name:
+        if is_coinbase and default_config.notification_gmail_user_name:
             self.email_notification = EmailNotification(
                 default_config.notification_gmail_user_name,
                 self.secrets["gmail_password"],
@@ -37,7 +36,7 @@ class BitcoinDCA:
         else:
             self.email_notification = None
 
-        if default_config.withdraw_every_x_buy:
+        if is_coinbase and default_config.withdraw_every_x_buy:
             self.address_selector = AddressSelector(
                 default_config.withdraw_master_public_key,
                 default_config.withdraw_beginning_address,
@@ -45,7 +44,8 @@ class BitcoinDCA:
         self.db_manager = DBManager()
         self.next_buy_datetime = self.calcFirstBuyTime()
         self.next_robinhood_buy_datetime = self.calcRobinhoodFirstBuyTime()
-        self.coinbase_pro = self.newCoinbaseProClient()
+        if is_coinbase:
+            self.coinbase_pro = self.newCoinbaseProClient()
 
     def newCoinbaseProClient(self):
         return CoinbasePro(
@@ -146,6 +146,10 @@ class BitcoinDCA:
         )
 
     def startCoinbaseDCA(self):
+        print("----------------------")
+        print("----------------------")
+        Logger.info("Coinbase DCA started\n")
+
         Logger.info("----------------------")
         Logger.info("----------------------")
         Logger.info("Coinbase DCA started\n")
@@ -226,12 +230,12 @@ class BitcoinDCA:
 
 
 def coinbaseDCA():
-    coinbase_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"])
+    coinbase_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"], True)
     coinbase_dca.startCoinbaseDCA()
 
 
 def robinhoodDCA():
-    robinhood_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"])
+    robinhood_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"], False)
     robinhood_dca.startRobinhoodDCA()
 
 
