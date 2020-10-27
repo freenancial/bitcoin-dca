@@ -6,12 +6,9 @@ import configparser
 
 class Config:
     def __init__(self, config_file_path):
-        self.config_file_path = config_file_path
-        self.config = configparser.ConfigParser()
-        self.config.read(config_file_path)
-
-    def reload(self):
-        self.config.read(self.config_file_path)
+        with open(config_file_path):
+            self.config = configparser.ConfigParser()
+            self.config.read(config_file_path)
 
     @property
     def dca_frequency(self):
