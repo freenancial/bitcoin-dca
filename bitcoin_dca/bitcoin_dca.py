@@ -235,6 +235,6 @@ def robinhoodDCA(config_value):
 
 if __name__ == "__main__":
     config = Config("config.ini")
-    _thread.start_new_thread(robinhoodDCA, (config))
+    _thread.start_new_thread(robinhoodDCA, (config,))
     time.sleep(5)
-    _thread.start_new_thread(coinbaseDCA, (config))
+    _thread.start_new_thread(coinbaseDCA, (config,))
