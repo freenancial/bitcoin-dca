@@ -9,7 +9,7 @@ import getpass
 from bitcoin_dca.bitcoin_dca import BitcoinDCA
 passwd = getpass.getpass()
 
-bitcoin_dca = BitcoinDCA(passwd)
+bitcoin_dca = BitcoinDCA(False, passwd)
 ```
 
 # Use Robinhood class
