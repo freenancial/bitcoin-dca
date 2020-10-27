@@ -6,9 +6,12 @@ import configparser
 
 class Config:
     def __init__(self, config_file_path):
-        with open(config_file_path) as fp:
-            self.config = configparser.ConfigParser()
-            self.config.readfp(fp)
+        self.config_file_path = config_file_path
+        self.config = configparser.ConfigParser()
+        self.config.read(config_file_path)
+
+    def reload(self):
+        self.config.read(self.config_file_path)
 
     @property
     def dca_frequency(self):
@@ -55,3 +58,7 @@ class Config:
     @property
     def notification_receiver(self):
         return self.config["NOTIFICATION"].get("EMAIL_NOTICE_RECEIVER")
+
+
+default_config = Config("Config.ini")
+
