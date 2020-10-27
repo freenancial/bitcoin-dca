@@ -14,7 +14,7 @@ import pyotp
 import ahr999_index
 from address_selector import AddressSelector
 from coinbase_pro import CoinbasePro
-from config import Config, default_config
+from config import default_config
 from db_manager import DBManager
 from email_notification import EmailNotification
 from logger import Logger
