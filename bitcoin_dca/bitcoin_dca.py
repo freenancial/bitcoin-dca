@@ -230,12 +230,12 @@ class BitcoinDCA:
 
 
 def coinbaseDCA():
-    coinbase_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"], True)
+    coinbase_dca = BitcoinDCA(True, os.environ["ENCRYPTION_PASS"])
     coinbase_dca.startCoinbaseDCA()
 
 
 def robinhoodDCA():
-    robinhood_dca = BitcoinDCA(os.environ["ENCRYPTION_PASS"], False)
+    robinhood_dca = BitcoinDCA(False, os.environ["ENCRYPTION_PASS"])
     robinhood_dca.startRobinhoodDCA()
 
 
