@@ -120,6 +120,8 @@ class DBManager:
             "%Y-%m-%dT%H:%M:%S.%f%z",
         ):
             try:
+                if ":" == order_datetime[-3:-2]:
+                    order_datetime = order_datetime[:-3] + order_datetime[-2:]
                 parsed_datetime = datetime.strptime(order_datetime, fmt)
                 if parsed_datetime.tzinfo is None:
                     parsed_datetime = parsed_datetime.replace(tzinfo=timezone.utc)
