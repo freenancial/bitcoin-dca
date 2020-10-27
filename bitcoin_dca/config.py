@@ -6,9 +6,9 @@ import configparser
 
 class Config:
     def __init__(self, config_file_path):
-        with open(config_file_path):
+        with open(config_file_path) as fp:
             self.config = configparser.ConfigParser()
-            self.config.read(config_file_path)
+            self.config.readfp(fp)
 
     @property
     def dca_frequency(self):
