@@ -17,6 +17,12 @@ class DBManager:
             (date text, cost real, size real, withdraw_address text)
             """
         )
+        c.execute(
+            """
+            CREATE TABLE if not exists RobinhoodBuyOrders
+            (date text, price real, size real)
+            """
+        )
         self.conn.commit()
 
     def saveBuyTransaction(self, date, cost, size):
@@ -24,6 +30,15 @@ class DBManager:
         c.execute(
             f"""
             INSERT INTO BuyOrders VALUES ('{date}', {cost}, {size}, '')
+            """
+        )
+        self.conn.commit()
+
+    def saveRobinhoodBuyTransaction(self, date, price, size):
+        c = self.conn.cursor()
+        c.execute(
+            f"""
+            INSERT INTO RobinhoodBuyOrders VALUES ('{date}', {price}, {size})
             """
         )
         self.conn.commit()
@@ -68,6 +83,15 @@ class DBManager:
         )
         return c.fetchone()[0]
 
+    def getRobinhoodLastBuyOrderDatetime(self):
+        c = self.conn.cursor()
+        c.execute(
+            """
+            SELECT MAX(date) FROM RobinhoodBuyOrders
+            """
+        )
+        return c.fetchone()[0]
+
     def printAllBuyTransactions(self):
         c = self.conn.cursor()
         c.execute(
@@ -78,11 +102,31 @@ class DBManager:
         for buy_order in c:
             print(buy_order)
 
+    def printAllRobinhoodBuyTransactions(self):
+        c = self.conn.cursor()
+        c.execute(
+            """
+            SELECT * FROM RobinhoodBuyOrders
+            """
+        )
+        for buy_order in c:
+            print(buy_order)
+
     @staticmethod
     def convertOrderDatetime(order_datetime):
-        try:
-            utc_datetime = datetime.strptime(order_datetime, "%Y-%m-%dT%H:%M:%S.%fZ")
-        except ValueError:
-            utc_datetime = datetime.strptime(order_datetime, "%Y-%m-%dT%H:%M:%SZ")        
-        local_datetime = utc_datetime.replace(tzinfo=timezone.utc).astimezone(tz=None)
-        return local_datetime.replace(tzinfo=None)
+        for fmt in (
+            "%Y-%m-%dT%H:%M:%S.%fZ",
+            "%Y-%m-%dT%H:%M:%SZ",
+            "%Y-%m-%dT%H:%M:%S.%f%z",
+        ):
+            try:
+                if ":" == order_datetime[-3:-2]:
+                    order_datetime = order_datetime[:-3] + order_datetime[-2:]
+                parsed_datetime = datetime.strptime(order_datetime, fmt)
+                if parsed_datetime.tzinfo is None:
+                    parsed_datetime = parsed_datetime.replace(tzinfo=timezone.utc)
+                local_datetime = parsed_datetime.astimezone(tz=None)
+                return local_datetime.replace(tzinfo=None)
+            except ValueError:
+                pass
+        raise ValueError("No valid date format found")

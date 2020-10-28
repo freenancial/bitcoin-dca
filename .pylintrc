@@ -1,10 +1,11 @@
 [MASTER]
 init-hook='import sys; sys.path.append("./bitcoin_dca/")'
 
-
 [MESSAGES CONTROL]
 disable=C
 
-
 [BASIC]
 method-naming-style=camelCase
+
+[DESIGN]
+max-attributes=12
