@@ -1,3 +1,3 @@
 #!/bin/bash
-
-kill $(ps aux|grep "[b]itcoin_dca.py" |  awk '{print $2}')
+dca_pid=$(pgrep -f '[b]itcoin_dca.py')
+[ -n "$dca_pid" ] && kill $dca_pid || true
