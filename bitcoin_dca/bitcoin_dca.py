@@ -235,7 +235,8 @@ def robinhoodDCA():
 
 
 if __name__ == "__main__":
-    _thread.start_new_thread(robinhoodDCA, ())
+    if default_config.robinhood_dca_usd_amount > 0:
+        _thread.start_new_thread(robinhoodDCA, ())
     time.sleep(5)
     coinbase_dca = BitcoinDCA(True, os.environ["ENCRYPTION_PASS"])
     coinbase_dca.startCoinbaseDCA()
