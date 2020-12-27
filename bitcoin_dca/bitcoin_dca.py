@@ -68,6 +68,9 @@ class BitcoinDCA:
             return datetime.datetime.now()
 
         last_buy_datetime = DBManager.convertOrderDatetime(last_buy_order_datetime)
+        Logger.info(
+            f"Last Coinbase buy order was at: {last_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        )
         return max(
             datetime.datetime.now(),
             last_buy_datetime + datetime.timedelta(0, default_config.dca_frequency),
