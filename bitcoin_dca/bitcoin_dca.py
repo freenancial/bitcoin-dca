@@ -61,9 +61,7 @@ class BitcoinDCA:
 
     def calcFirstBuyTime(self):
         last_buy_order_datetime = self.db_manager.getLastBuyOrderDatetime()
-        Logger.info(
-            f"Last coinbase buy order was at: {last_buy_order_datetime.strftime('%Y-%m-%d %H:%M:%S')}\n"
-        )
+        Logger.info(f"Last coinbase buy order was at: {last_buy_order_datetime}\n")
 
         # If we have no buy recored, we execute a buy order immediately.
         if not last_buy_order_datetime:
