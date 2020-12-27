@@ -8,8 +8,7 @@ setup: init
 	. venv/bin/activate && ./bitcoin_dca/setup.py
 
 start_dca:
-	./scripts/stop_dca.sh || true
-	./scripts/start_dca.sh
+	./scripts/stop_dca.sh && ./scripts/start_dca.sh
 
 stop_dca:
 	./scripts/stop_dca.sh
