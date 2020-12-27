@@ -43,6 +43,10 @@ class BitcoinDCA:
             )
         self.db_manager = DBManager()
         self.next_buy_datetime = self.calcFirstBuyTime()
+        Logger.info(
+            f"We'll wait for {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
+            f"to buy ${default_config.dca_usd_amount} Bitcoin on Coinbase...\n"
+        )
         self.next_robinhood_buy_datetime = self.calcRobinhoodFirstBuyTime()
         if is_coinbase:
             self.coinbase_pro = self.newCoinbaseProClient()
@@ -57,6 +61,10 @@ class BitcoinDCA:
 
     def calcFirstBuyTime(self):
         last_buy_order_datetime = self.db_manager.getLastBuyOrderDatetime()
+        Logger.info(
+            f"Last coinbase buy order was at: {last_buy_order_datetime.strftime('%Y-%m-%d %H:%M:%S')}\n"
+        )
+
         # If we have no buy recored, we execute a buy order immediately.
         if not last_buy_order_datetime:
             return datetime.datetime.now()
