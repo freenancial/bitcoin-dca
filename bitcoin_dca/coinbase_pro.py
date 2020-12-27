@@ -82,7 +82,8 @@ class CoinbasePro:
         Logger.info("  Coinbase: ${:.2f}".format(self.coinbase_usdc_account.balance))
         Logger.info("  USDC: ${:.2f}".format(math.floor(self.usdc_balance * 100) / 100))
         Logger.info("  USD: ${:.2f}".format(math.floor(self.usd_balance * 100) / 100))
-        Logger.info("  BTC: ₿{}\n".format(self.btc_account.balance))
+        Logger.info("  BTC: ₿{}".format(self.btc_account.balance))
+        Logger.info("")
 
     @property
     def unwithdrawn_buys_count(self):
@@ -141,7 +142,9 @@ class CoinbasePro:
                 size=order_result["filled_size"],
             )
         except Exception as error:  # pylint: disable=broad-except
-            Logger.error(f"Buy Bitcoin failed, error: {error}; order_result: {order_result}")
+            Logger.error(
+                f"Buy Bitcoin failed, error: {error}; order_result: {order_result}"
+            )
         time.sleep(5)
 
     def withdrawBitcoin(self, amount, address):

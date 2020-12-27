@@ -42,7 +42,6 @@ class BitcoinDCA:
                 default_config.withdraw_beginning_address,
             )
         self.db_manager = DBManager()
-        self.next_buy_datetime = self.calcFirstBuyTime()
         self.next_robinhood_buy_datetime = self.calcRobinhoodFirstBuyTime()
         if is_coinbase:
             self.coinbase_pro = self.newCoinbaseProClient()
@@ -148,11 +147,15 @@ class BitcoinDCA:
     def startCoinbaseDCA(self):
         Logger.info("----------------------")
         Logger.info("----------------------")
-        Logger.info("Coinbase DCA started\n")
+        Logger.info("Coinbase DCA started")
+
+        Logger.info("")
+        self.next_buy_datetime = self.calcFirstBuyTime()
         Logger.info(
             f"We'll wait for {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
-            f"to buy ${default_config.dca_usd_amount} Bitcoin on Coinbase...\n"
+            f"to buy ${default_config.dca_usd_amount} Bitcoin on Coinbase..."
         )
+        Logger.info("")
         self.coinbase_pro.showBalance()
 
         while True:
