@@ -151,13 +151,13 @@ class BitcoinDCA:
         )
 
     def startCoinbaseDCA(self):
-        print("----------------------")
-        print("----------------------")
-        Logger.info("Coinbase DCA started\n")
-
         Logger.info("----------------------")
         Logger.info("----------------------")
         Logger.info("Coinbase DCA started\n")
+        Logger.info(
+            f"We'll wait for {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
+            f"to buy ${default_config.dca_usd_amount} Bitcoin on Coinbase...\n"
+        )
         self.coinbase_pro.showBalance()
 
         while True:
