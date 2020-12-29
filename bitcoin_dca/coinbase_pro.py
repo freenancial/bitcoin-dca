@@ -131,10 +131,13 @@ class CoinbasePro:
         order_result = self.auth_client.place_market_order(
             product_id, "buy", funds=usd_amount
         )
+        Logger.info(f"order_result: {order_result}")
+
         try:
             while not order_result["settled"]:
                 time.sleep(5)
                 order_result = self.auth_client.get_order(order_result["id"])
+                Logger.info(f"order_result: {order_result}")
             self.printOrderResult(order_result)
             self.db_manager.saveBuyTransaction(
                 date=order_result["done_at"],
