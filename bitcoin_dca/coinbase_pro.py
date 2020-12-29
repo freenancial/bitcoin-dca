@@ -178,7 +178,8 @@ class CoinbasePro:
         )
         Logger.info(f"  Price: \t{ price }")
         Logger.info(f"  Fee: \t{ order_result['fill_fees'] }")
-        Logger.info(f"  Date: \t{ order_result['done_at'] }\n")
+        Logger.info(f"  Date: \t{ order_result['done_at'] }")
+        Logger.info("")
 
     @staticmethod
     def convertRawAccount(raw_account):
