@@ -112,7 +112,7 @@ class Secret:
         if not encryption_pass:
             encryption_pass = getpass.getpass("Password for unlocking secrets: ")
         with open("bitcoin_dca.secrets", "r") as f:
-            secret_version = f.readline()
+            secret_version = f.readline().strip()
             if secret_version != SECRET_VERSION:
                 Logger.error(
                     f"Wrong secret version. Expected: '{SECRET_VERSION}'; Found: '{secret_version}'"
@@ -123,15 +123,15 @@ class Secret:
             salt_b64_str = f.readline()
             key = Secret.generateEncryptionKey(encryption_pass, salt_b64_str)
             try:
-                api_key = Secret.decrypt(key, f.readline())
-                api_secret = Secret.decrypt(key, f.readline())
-                passphrase = Secret.decrypt(key, f.readline())
-                master_public_key = Secret.decrypt(key, f.readline())
-                beginning_address = Secret.decrypt(key, f.readline())
-                gmail_password = Secret.decrypt(key, f.readline())
-                robinhood_user = Secret.decrypt(key, f.readline())
-                robinhood_password = Secret.decrypt(key, f.readline())
-                robinhood_totp = Secret.decrypt(key, f.readline())
+                api_key = Secret.decrypt(key, f.readline()).strip()
+                api_secret = Secret.decrypt(key, f.readline()).strip()
+                passphrase = Secret.decrypt(key, f.readline()).strip()
+                master_public_key = Secret.decrypt(key, f.readline()).strip()
+                beginning_address = Secret.decrypt(key, f.readline()).strip()
+                gmail_password = Secret.decrypt(key, f.readline()).strip()
+                robinhood_user = Secret.decrypt(key, f.readline()).strip()
+                robinhood_password = Secret.decrypt(key, f.readline()).strip()
+                robinhood_totp = Secret.decrypt(key, f.readline()).strip()
                 Secret.secrets_dict = {
                     "api_key": api_key,
                     "api_secret": api_secret,
