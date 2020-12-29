@@ -97,7 +97,8 @@ class CoinbasePro:
         result = self.auth_client.coinbase_deposit(
             amount, "USDC", self.coinbase_usdc_account.id
         )
-        Logger.info(f"  {result}\n")
+        Logger.info(f"  {result}")
+        Logger.info("")
         time.sleep(5)
 
     def convertUSDCToUSD(self, amount):
@@ -111,7 +112,8 @@ class CoinbasePro:
 
         Logger.info(f"Converting ${amount} USDC to USD ...")
         result = self.auth_client.convert_stablecoin(amount, "USDC", "USD")
-        Logger.info(f"  {result}\n")
+        Logger.info(f"  {result}")
+        Logger.info("")
         time.sleep(5)
 
     def buyBitcoin(self, usd_amount):
@@ -131,13 +133,14 @@ class CoinbasePro:
         order_result = self.auth_client.place_market_order(
             product_id, "buy", funds=usd_amount
         )
-        Logger.info(f"order_result: {order_result}")
+        Logger.info(f"  order_result: {order_result}")
 
         try:
+            order_id = order_result["id"]
             while not order_result["settled"]:
                 time.sleep(5)
-                order_result = self.auth_client.get_order(order_result["id"])
-                Logger.info(f"order_result: {order_result}")
+                order_result = self.auth_client.get_order(order_id)
+                Logger.info(f"  order_result: {order_result}")
             self.printOrderResult(order_result)
             self.db_manager.saveBuyTransaction(
                 date=order_result["done_at"],
@@ -153,7 +156,8 @@ class CoinbasePro:
     def withdrawBitcoin(self, amount, address):
         Logger.info(f"Withdrawing ₿{amount} Bitcoin to address {address} ...")
         result = self.auth_client.crypto_withdraw(amount, "BTC", address)
-        Logger.info(f"  {result}\n")
+        Logger.info(f"  {result}")
+        Logger.info("")
         self.db_manager.updateWithdrawAddressForBuyOrders(address)
 
     def getBitcoinWorth(self):
