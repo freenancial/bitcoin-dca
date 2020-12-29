@@ -7,7 +7,7 @@ init:
 update_secrets:
 	. venv/bin/activate && ./bitcoin_dca/setup.py
 
-setup: init update_secret
+setup: init update_secrets
 
 start_dca:
 	./scripts/stop_dca.sh && ./scripts/start_dca.sh
