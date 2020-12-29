@@ -66,8 +66,8 @@ class Secret:
 
         if Secret.answeredYes("DCA with Coinbase Pro? (y/n): "):
             passphrase = getpass.getpass("Your Coinbase Pro API passphrase: ")
-            api_key = getpass.getpass("Your Coinbase Pro API key: ")
             api_secret = getpass.getpass("Your Coinbase Pro API secret: ")
+            api_key = getpass.getpass("Your Coinbase Pro API key: ")
             print("")
 
             if Secret.answeredYes("Auto withdraw Bitcoin? (y/n): "):
