@@ -114,6 +114,9 @@ class Secret:
         with open("bitcoin_dca.secrets", "r") as f:
             secret_version = f.readline()
             if secret_version != SECRET_VERSION:
+                Logger.error(
+                    f"Wrong secret version. Expected: '{SECRET_VERSION}'; Found: '{secret_version}'"
+                )
                 raise Exception(
                     "Secret version mismatch. Please create a new secret valut by `make update_secrets`"
                 )
