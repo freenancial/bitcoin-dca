@@ -42,10 +42,15 @@ class BitcoinDCA:
                 default_config.withdraw_beginning_address,
             )
         self.db_manager = DBManager()
-        self.next_buy_datetime = self.calcFirstBuyTime()
         self.next_robinhood_buy_datetime = self.calcRobinhoodFirstBuyTime()
         if is_coinbase:
+            Logger.info("\n")
+            Logger.info("----------------------")
+            Logger.info("----------------------")
+            Logger.info("Coinbase DCA started")
+            Logger.info("")
             self.coinbase_pro = self.newCoinbaseProClient()
+            self.next_buy_datetime = self.calcFirstBuyTime()
 
     def newCoinbaseProClient(self):
         return CoinbasePro(
@@ -62,6 +67,10 @@ class BitcoinDCA:
             return datetime.datetime.now()
 
         last_buy_datetime = DBManager.convertOrderDatetime(last_buy_order_datetime)
+        Logger.info(
+            f"Last Coinbase buy order was at: {last_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+        Logger.info("")
         return max(
             datetime.datetime.now(),
             last_buy_datetime + datetime.timedelta(0, default_config.dca_frequency),
@@ -84,7 +93,8 @@ class BitcoinDCA:
         # Skip buying bitcoin if ahr999 index is above 5.0
         try:
             ahr999_index_value = ahr999_index.getCurrentIndexValue()
-            Logger.info(f"ahr999_index: {ahr999_index_value}\n")
+            Logger.info(f"ahr999_index: {ahr999_index_value}")
+            Logger.info("")
             if ahr999_index_value > 5.0:
                 Logger.info("ahr999_index is over 5.0")
                 Logger.info("Skip this round of Bitcoin purchase")
@@ -143,14 +153,12 @@ class BitcoinDCA:
         )
 
     def startCoinbaseDCA(self):
-        print("----------------------")
-        print("----------------------")
-        Logger.info("Coinbase DCA started\n")
-
-        Logger.info("----------------------")
-        Logger.info("----------------------")
-        Logger.info("Coinbase DCA started\n")
         self.coinbase_pro.showBalance()
+        Logger.info(
+            f"We'll wait for {self.next_buy_datetime.strftime('%Y-%m-%d %H:%M:%S')} "
+            f"to buy ${default_config.dca_usd_amount} Bitcoin on Coinbase..."
+        )
+        Logger.info("")
 
         while True:
             self.waitForNextBuyTime()
@@ -232,7 +240,8 @@ def robinhoodDCA():
 
 
 if __name__ == "__main__":
-    _thread.start_new_thread(robinhoodDCA, ())
+    if default_config.robinhood_dca_usd_amount > 0:
+        _thread.start_new_thread(robinhoodDCA, ())
     time.sleep(5)
     coinbase_dca = BitcoinDCA(True, os.environ["ENCRYPTION_PASS"])
     coinbase_dca.startCoinbaseDCA()
