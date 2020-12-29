@@ -2,10 +2,12 @@
 
 init:
 	./scripts/init.sh
-
-setup: init
 	cp config_template.ini config.ini
+
+update_secret:
 	. venv/bin/activate && ./bitcoin_dca/setup.py
+
+setup: init update_secret
 
 start_dca:
 	./scripts/stop_dca.sh && ./scripts/start_dca.sh
