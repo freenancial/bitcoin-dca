@@ -4,7 +4,7 @@ init:
 	./scripts/init.sh
 	cp config_template.ini config.ini
 
-update_secret:
+update_secrets:
 	. venv/bin/activate && ./bitcoin_dca/setup.py
 
 setup: init update_secret

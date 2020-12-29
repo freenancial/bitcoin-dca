@@ -38,8 +38,7 @@ class BitcoinDCA:
 
         if is_coinbase and default_config.withdraw_every_x_buy:
             self.address_selector = AddressSelector(
-                default_config.withdraw_master_public_key,
-                default_config.withdraw_beginning_address,
+                self.secrets["master_public_key"], self.secrets["beginning_address"],
             )
         self.db_manager = DBManager()
         self.next_robinhood_buy_datetime = self.calcRobinhoodFirstBuyTime()
