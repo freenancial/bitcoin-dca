@@ -44,14 +44,6 @@ class Config:
         return self.config["AUTO_WITHDRAWL"].getint("WITHDRAW_EVERY_X_BUY")
 
     @property
-    def withdraw_master_public_key(self):
-        return self.config["AUTO_WITHDRAWL"].get("MASTER_PUBLIC_KEY")
-
-    @property
-    def withdraw_beginning_address(self):
-        return self.config["AUTO_WITHDRAWL"].get("BEGINNING_ADDRESS")
-
-    @property
     def notification_gmail_user_name(self):
         return self.config["NOTIFICATION"].get("GMAIL_USER_NAME")
 
