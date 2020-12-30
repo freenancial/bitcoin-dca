@@ -137,7 +137,7 @@ class CoinbasePro:
 
         try:
             order_id = order_result["id"]
-            while not order_result["settled"]:
+            while not order_result.get("settled"):
                 time.sleep(5)
                 order_result = self.auth_client.get_order(order_id)
                 Logger.debug(f"  order_result: {order_result}")
