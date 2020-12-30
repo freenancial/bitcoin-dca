@@ -36,7 +36,7 @@ class BitcoinDCA:
         else:
             self.email_notification = None
 
-        if is_coinbase and default_config.withdraw_every_x_buy:
+        if is_coinbase and default_config.withdraw_btc_threshold:
             self.address_selector = AddressSelector(
                 self.secrets["master_public_key"], self.secrets["beginning_address"],
             )
@@ -184,8 +184,7 @@ class BitcoinDCA:
     def timeToWithdraw(self):
         return (
             self.address_selector is not None
-            and self.coinbase_pro.unwithdrawn_buys_count
-            >= default_config.withdraw_every_x_buy
+            and self.coinbase_pro.btc_balance >= default_config.withdraw_btc_threshold
         )
 
     def sendEmailNotification(self):

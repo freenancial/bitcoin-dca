@@ -40,8 +40,8 @@ class Config:
         return self.config["ROBINHOOD"].getfloat("DCA_USD_AMOUNT")
 
     @property
-    def withdraw_every_x_buy(self):
-        return self.config["AUTO_WITHDRAWL"].getint("WITHDRAW_EVERY_X_BUY")
+    def withdraw_btc_threshold(self):
+        return self.config["COINBASE_PRO"].getfloat("AUTO_WITHDRAW_BTC_THRESHOLD")
 
     @property
     def notification_gmail_user_name(self):
