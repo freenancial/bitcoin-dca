@@ -71,6 +71,6 @@ class Logger:
             handler.setFormatter(formatter)
             logger = logging.getLogger("BitcoinDCALogger")
             logger.addHandler(handler)
-            logger.setLevel(logging.DEBUG)
+            logger.setLevel(logging.INFO)
             Logger._logger = logger
         return Logger._logger
