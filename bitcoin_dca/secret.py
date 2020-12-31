@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from logger import Logger
 
-SECRET_VERSION = "1.0"
+SECRET_VERSION = "1.1"
 
 
 class Secret:
@@ -54,15 +54,14 @@ class Secret:
                 break
 
         # Init secrets with random strings
-        api_key = base64.b64encode(os.urandom(16)).decode('utf-8')
-        api_secret = base64.b64encode(os.urandom(16)).decode('utf-8')
-        passphrase = base64.b64encode(os.urandom(16)).decode('utf-8')
-        master_public_key = base64.b64encode(os.urandom(16)).decode('utf-8')
-        beginning_address = base64.b64encode(os.urandom(16)).decode('utf-8')
-        gmail_password = base64.b64encode(os.urandom(16)).decode('utf-8')
-        robinhood_user = base64.b64encode(os.urandom(16)).decode('utf-8')
-        robinhood_password = base64.b64encode(os.urandom(16)).decode('utf-8')
-        robinhood_totp = base64.b64encode(os.urandom(16)).decode('utf-8')
+        api_key = base64.b64encode(os.urandom(16)).decode("utf-8")
+        api_secret = base64.b64encode(os.urandom(16)).decode("utf-8")
+        passphrase = base64.b64encode(os.urandom(16)).decode("utf-8")
+        master_public_key = base64.b64encode(os.urandom(16)).decode("utf-8")
+        gmail_password = base64.b64encode(os.urandom(16)).decode("utf-8")
+        robinhood_user = base64.b64encode(os.urandom(16)).decode("utf-8")
+        robinhood_password = base64.b64encode(os.urandom(16)).decode("utf-8")
+        robinhood_totp = base64.b64encode(os.urandom(16)).decode("utf-8")
 
         if Secret.answeredYes("DCA with Coinbase Pro? (y/n): "):
             passphrase = getpass.getpass("Your Coinbase Pro API passphrase: ")
@@ -72,7 +71,6 @@ class Secret:
 
             if Secret.answeredYes("Auto withdraw Bitcoin? (y/n): "):
                 master_public_key = getpass.getpass("Master public key: ")
-                beginning_address = getpass.getpass("Beginning address: ")
                 print("")
 
                 if Secret.answeredYes("Send out email notifications? (y/n): "):
@@ -97,7 +95,6 @@ class Secret:
             f.write(Secret.encrypt(key, api_secret) + "\n")
             f.write(Secret.encrypt(key, passphrase) + "\n")
             f.write(Secret.encrypt(key, master_public_key) + "\n")
-            f.write(Secret.encrypt(key, beginning_address) + "\n")
             f.write(Secret.encrypt(key, gmail_password) + "\n")
             f.write(Secret.encrypt(key, robinhood_user) + "\n")
             f.write(Secret.encrypt(key, robinhood_password) + "\n")
@@ -127,7 +124,6 @@ class Secret:
                 api_secret = Secret.decrypt(key, f.readline()).strip()
                 passphrase = Secret.decrypt(key, f.readline()).strip()
                 master_public_key = Secret.decrypt(key, f.readline()).strip()
-                beginning_address = Secret.decrypt(key, f.readline()).strip()
                 gmail_password = Secret.decrypt(key, f.readline()).strip()
                 robinhood_user = Secret.decrypt(key, f.readline()).strip()
                 robinhood_password = Secret.decrypt(key, f.readline()).strip()
@@ -137,7 +133,6 @@ class Secret:
                     "api_secret": api_secret,
                     "passphrase": passphrase,
                     "master_public_key": master_public_key,
-                    "beginning_address": beginning_address,
                     "gmail_password": gmail_password,
                     "robinhood_user": robinhood_user,
                     "robinhood_password": robinhood_password,

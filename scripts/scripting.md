@@ -12,6 +12,15 @@ passwd = getpass.getpass()
 bitcoin_dca = BitcoinDCA(True, passwd)
 ```
 
+# Query the withdrawal addresses
+```
+bitcoin_dca.address_selector.getCurrentAddress()
+bitcoin_dca.address_selector.incrementAddressIndex()
+bitcoin_dca.address_selector.getCurrentAddress()
+bitcoin_dca.address_selector.incrementAddressIndex()
+bitcoin_dca.address_selector.getCurrentAddress()
+```
+
 # Use Robinhood class
 ```
 import robin_stocks
