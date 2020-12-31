@@ -54,15 +54,15 @@ class Secret:
                 break
 
         # Init secrets with random strings
-        api_key = base64.b64encode(os.urandom(16))
-        api_secret = base64.b64encode(os.urandom(16))
-        passphrase = base64.b64encode(os.urandom(16))
-        master_public_key = base64.b64encode(os.urandom(16))
-        beginning_address = base64.b64encode(os.urandom(16))
-        gmail_password = base64.b64encode(os.urandom(16))
-        robinhood_user = base64.b64encode(os.urandom(16))
-        robinhood_password = base64.b64encode(os.urandom(16))
-        robinhood_totp = base64.b64encode(os.urandom(16))
+        api_key = base64.b64encode(os.urandom(16)).decode('utf-8')
+        api_secret = base64.b64encode(os.urandom(16)).decode('utf-8')
+        passphrase = base64.b64encode(os.urandom(16)).decode('utf-8')
+        master_public_key = base64.b64encode(os.urandom(16)).decode('utf-8')
+        beginning_address = base64.b64encode(os.urandom(16)).decode('utf-8')
+        gmail_password = base64.b64encode(os.urandom(16)).decode('utf-8')
+        robinhood_user = base64.b64encode(os.urandom(16)).decode('utf-8')
+        robinhood_password = base64.b64encode(os.urandom(16)).decode('utf-8')
+        robinhood_totp = base64.b64encode(os.urandom(16)).decode('utf-8')
 
         if Secret.answeredYes("DCA with Coinbase Pro? (y/n): "):
             passphrase = getpass.getpass("Your Coinbase Pro API passphrase: ")
