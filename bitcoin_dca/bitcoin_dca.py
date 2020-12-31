@@ -11,7 +11,6 @@ import time
 import robin_stocks
 import pyotp
 
-import ahr999_index
 from address_selector import AddressSelector
 from coinbase_pro import CoinbasePro
 from config import default_config
