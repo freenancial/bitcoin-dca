@@ -29,6 +29,10 @@ class Config:
         return self.config["COINBASE_PRO"].getfloat("MIN_USDC_BALANCE")
 
     @property
+    def withdraw_beginning_address(self):
+        return self.config["COINBASE_PRO"].get("BEGINNING_ADDRESS")
+
+    @property
     def robinhood_dca_frequency(self):
         dca_times_per_day = self.config["ROBINHOOD"].getfloat("DCA_TIMES_PER_DAY")
         seconds_per_day = 24 * 3600
