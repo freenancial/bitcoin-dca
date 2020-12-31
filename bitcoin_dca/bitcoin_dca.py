@@ -89,23 +89,6 @@ class BitcoinDCA:
             + datetime.timedelta(0, default_config.robinhood_dca_frequency),
         )
 
-    def checkBuyingCriteria(self):
-        # Skip buying bitcoin if ahr999 index is above 5.0
-        try:
-            ahr999_index_value = ahr999_index.getCurrentIndexValue()
-            Logger.info(f"ahr999_index: {ahr999_index_value}")
-            Logger.info("")
-            if ahr999_index_value > 5.0:
-                Logger.info("ahr999_index is over 5.0")
-                Logger.info("Skip this round of Bitcoin purchase")
-                self.next_buy_datetime += datetime.timedelta(
-                    0, default_config.dca_frequency
-                )
-                return False
-        except Exception as error:  # pylint: disable=broad-except
-            Logger.critical(f"Getting ahr999_index failed: {error}")
-        return True
-
     def buyBitcoinOnCoinbase(self):
         if default_config.dca_usd_amount <= 0:
             Logger.info("Skip Coinbase DCA because the dca amount is no larger than 0")
@@ -157,12 +140,6 @@ class BitcoinDCA:
             self.waitForNextBuyTime()
 
             Logger.info("----------------------")
-            if not self.checkBuyingCriteria():
-                self.next_buy_datetime += datetime.timedelta(
-                    0, default_config.dca_frequency
-                )
-                continue
-
             self.buyBitcoinOnCoinbase()
             self.next_buy_datetime += datetime.timedelta(
                 0, default_config.dca_frequency
