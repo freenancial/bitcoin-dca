@@ -187,4 +187,4 @@ class CoinbasePro:
 
     @staticmethod
     def convertRawAccount(raw_account):
-        return Account(id=raw_account["id"], balance=float(raw_account["balance"]))
+        return Account(id=raw_account["id"], balance=float(raw_account["available"]))
