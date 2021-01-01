@@ -54,7 +54,7 @@ class CoinbasePro:
 
     @property
     def coinbase_usdc_account(self):
-        return self.convertRawAccount(self.getCoinbaseAccount("USDC"))
+        return self.convertRawCoinbaseAccount(self.getCoinbaseAccount("USDC"))
 
     @property
     def usd_account(self):
@@ -188,3 +188,7 @@ class CoinbasePro:
     @staticmethod
     def convertRawAccount(raw_account):
         return Account(id=raw_account["id"], balance=float(raw_account["available"]))
+
+    @staticmethod
+    def convertRawCoinbaseAccount(raw_account):
+        return Account(id=raw_account["id"], balance=float(raw_account["balance"]))
