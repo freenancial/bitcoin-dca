@@ -18,6 +18,7 @@ from db_manager import DBManager
 from email_notification import EmailNotification
 from logger import Logger
 from secret import Secret
+from croniter import croniter
 
 
 class BitcoinDCA:
@@ -60,6 +61,10 @@ class BitcoinDCA:
         )
 
     def calcFirstBuyTime(self):
+        next_cron_time = self.calcNextCronTime()
+        if next_cron_time:
+            return next_cron_time
+
         last_buy_order_datetime = self.db_manager.getLastBuyOrderDatetime()
         # If we have no buy recored, we execute a buy order immediately.
         if not last_buy_order_datetime:
@@ -75,7 +80,20 @@ class BitcoinDCA:
             last_buy_datetime + datetime.timedelta(0, default_config.dca_frequency),
         )
 
+    def calcNextBuyTime(self):
+        next_cron_time = self.calcNextCronTime()
+        return next_cron_time or self.next_buy_datetime + datetime.timedelta(0, default_config.dca_frequency)
+
+    @staticmethod
+    def calcNextCronTime():
+        dca_schedule = default_config.dca_schedule
+        return croniter(dca_schedule, datetime.datetime.now()).get_next(datetime.datetime) if dca_schedule else None
+
     def calcRobinhoodFirstBuyTime(self):
+        next_cron_time = self.calcRobinhoodNextCronTime()
+        if next_cron_time:
+            return next_cron_time
+
         last_buy_order_datetime = self.db_manager.getRobinhoodLastBuyOrderDatetime()
         # If we have no buy recored, we execute a buy order immediately.
         if not last_buy_order_datetime:
@@ -87,6 +105,15 @@ class BitcoinDCA:
             last_buy_datetime
             + datetime.timedelta(0, default_config.robinhood_dca_frequency),
         )
+
+    def calcRobinhoodNextBuyTime(self):
+        next_cron_time = self.calcRobinhoodNextCronTime()
+        return next_cron_time or self.next_robinhood_buy_datetime + datetime.timedelta(0, default_config.robinhood_dca_frequency)
+
+    @staticmethod
+    def calcRobinhoodNextCronTime():
+        dca_schedule = default_config.robinhood_dca_schedule
+        return croniter(dca_schedule, datetime.datetime.now()).get_next(datetime.datetime) if dca_schedule else None
 
     def buyBitcoinOnCoinbase(self):
         if default_config.dca_usd_amount <= 0:
@@ -140,9 +167,7 @@ class BitcoinDCA:
 
             Logger.info("----------------------")
             self.buyBitcoinOnCoinbase()
-            self.next_buy_datetime += datetime.timedelta(
-                0, default_config.dca_frequency
-            )
+            self.next_buy_datetime = self.calcNextBuyTime()
 
     def startRobinhoodDCA(self):
         Logger.info("----------------------")
@@ -154,9 +179,7 @@ class BitcoinDCA:
 
             Logger.info("----------------------")
             self.buyBitcoinOnRobinhood()
-            self.next_robinhood_buy_datetime += datetime.timedelta(
-                0, default_config.robinhood_dca_frequency
-            )
+            self.next_robinhood_buy_datetime = self.calcRobinhoodNextBuyTime()
 
     def timeToWithdraw(self):
         return (

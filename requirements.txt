@@ -18,3 +18,4 @@ robin-stocks==1.5.2
 sortedcontainers==2.1.0
 urllib3==1.24.2
 websocket-client==0.54.0
+croniter==1.0.1
