@@ -21,6 +21,10 @@ class Config:
         return int(seconds_per_day / dca_times_per_day)
 
     @property
+    def dca_schedule(self):
+        return self.config["COINBASE_PRO"].get("DCA_SCHEDULE")
+
+    @property
     def dca_usd_amount(self):
         return self.config["COINBASE_PRO"].getint("DCA_USD_AMOUNT")
 
@@ -38,6 +42,10 @@ class Config:
         seconds_per_day = 24 * 3600
         # Convert dca times per day to dca frequency in seconds
         return int(seconds_per_day / dca_times_per_day)
+
+    @property
+    def robinhood_dca_schedule(self):
+        return self.config["ROBINHOOD"].get("DCA_SCHEDULE")
 
     @property
     def robinhood_dca_usd_amount(self):
